@@ -4,34 +4,42 @@
  </description>
  <property name="version" value="0.0.1"/> 
  <property name="src" value="src"/>
- <property name="build" value="buld"/>
+ <property name="build" value="build"/>
  <property name="dist" value="dist"/>
  <target name="init">
     <!--Increment the build number-->
     <buildnumber/>
     <!-- Create the time stamp -->
-    <tstamp/>
-    <!-- Create the build directory structure used by compile -->
+    <tstamp>
+      <format property="DTSTAMP" pattern="yyyy/MM/dd HH:mm:ss z" locale="en,US"/>
+    </tstamp> 
+   <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>
  </target>
 
+<target name="test" depends="init">
+  <echo message="${DTSTAMP}"/>
+</target>
+
  <target name="compile" depends="init" description="compile the source">
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}"/>
+    <javac includeantruntime="false" srcdir="${src}" destdir="${build}"/>
  </target>
 
  <target name="dist" depends="compile" description="generate the distribution">
   <!-- Create the distribution directory -->
-  <mkdir dir="${dist}/lib"/>
+  <mkdir dir="${dist}"/>
 
   <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
   <jar 
-    jarfile="${dist}/lib/${ant.project.name}-${version}.${build.number}.jar" 
+    jarfile="${dist}/lib/${ant.project.name}-${version}.jar" 
     basedir="${build}">
     <manifest>
       <attribute name="Build-By" value="${user.name}"/>
-      <attribute name="BuildTime" value="${DSTAMP}"/>
-      <attribute name="Version" value="${version}.${build.number}"/>
+      <attribute name="BuildTime" value="${DTSTAMP}"/>
+      <attribute name="Version" value="${version}" />
+      <attribute name="BuildNumber" value="${build.number}"/>
+      <attribute name="Main-Class" value="duct.main.Duct"/>
     </manifest>
 </jar>
  </target>
