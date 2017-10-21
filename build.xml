@@ -43,6 +43,7 @@
   <jar 
     jarfile="${dist}/${ant.project.name}-${version}.jar" 
     basedir="${build}">
+    <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
     <manifest>
       <attribute name="Build-By" value="${user.name}"/>
       <attribute name="BuildTime" value="${DTSTAMP}"/>
