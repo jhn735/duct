@@ -32,7 +32,7 @@
 
   <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
   <jar 
-    jarfile="${dist}/lib/${ant.project.name}-${version}.jar" 
+    jarfile="${dist}/${ant.project.name}-${version}.jar" 
     basedir="${build}">
     <manifest>
       <attribute name="Build-By" value="${user.name}"/>
@@ -41,7 +41,7 @@
       <attribute name="BuildNumber" value="${build.number}"/>
       <attribute name="Main-Class" value="duct.main.Duct"/>
     </manifest>
-</jar>
+  </jar>
  </target>
 
  <target name="clean" description="clean up">
