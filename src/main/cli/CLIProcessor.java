@@ -10,8 +10,13 @@ import java.util.List;
 
 
 public class CLIProcessor {
-  public CLIProcessor(){
+  public final Set<DuctCLIArgument> ductArgs;
+  public final List<String> scriptArgs;
 
+  public CLIProcessor(List<String> arguments){
+    CommandLine cmd = parseargs(arguments);
+    this.ductArgs = extractArgs(cmd);
+    this.scriptArgs = cmd.getArgList() 
   }
 
   /**
@@ -19,7 +24,7 @@ public class CLIProcessor {
    * @param cmd The object holding the parse commandline arguments.
    * @return A set of dArgs to take.
    */
-  private Set<DuctCLIArgument> extractArgs(CommandLine cmd){
+  private static Set<DuctCLIArgument> extractArgs(CommandLine cmd){
     HashSet<DuctCLIArgument> dArgs = new HashSet<>();
     
     //gather all the arguments that have been specified given process them.
@@ -27,7 +32,7 @@ public class CLIProcessor {
       //pick the right name, add it to the set and... 
       for(String name:dArg.getNames()){
         if(cmd.hasOption(name)){
-          String argumentValue = cmd.getOptionValue(name);
+          String argumentValue = cmd.getOptionValue(name, "");
           dArgs.add(new DuctCLIArgument(dArg, argumentValue));
         }
       } 
