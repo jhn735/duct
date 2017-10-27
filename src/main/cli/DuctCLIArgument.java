@@ -3,9 +3,16 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
 import java.util.List;
+import java.lang.NullPointerException;
 
 public class DuctCLIArgument {
   public final ArgDef definition;
+
+  //no need for a boolean value for the flag, the mere presence suffices.
+  public final String value;
+  protected static final String ERR_MSG_BASE = "Unable to process argument: ";
+  private final String NULL_DEF_MSG=ERR_MSG_BASE+"argument definition is null";
+  
   /**
    * Enumeration contain the definitions of the arguments to pull.
    **/
@@ -31,8 +38,21 @@ public class DuctCLIArgument {
     }
   }
 
-  public DuctCLIArgument(Definition def){
-    this.definition = def;
-  }
+  public DuctCLIArgument(ArgDef def, String argValue) throws NullPointerException{
+    if(def == null) 
+      throw new NullPointerException(NULL_DEF_MSG);
 
+    this.definition = def;
+    //if the value passed in is null, assign an empty string
+    if(argValue == null)
+      this.value = "";
+    else 
+      this.value = argValue;
+  }
+  
+  //override the hashCode so that hash collections will be based on the arg definition.
+  @Override
+  public int hashCode(){
+    return definition.hashCode();
+  }
 };

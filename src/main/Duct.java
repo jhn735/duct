@@ -28,14 +28,6 @@ public class Duct{
   }
 
   public Duct(String[] args){
-    this.dArgs = new HashSet<DuctCLIArgument>();
-   try{
-     CommandLine cmd = parseArgs(args);
-     this.dArgs.addAll(processArgs(cmd));
-   } catch(ParseException p){
-     this.dArgs.clear();
-     this.dArgs.add(DuctCLIArgument.HELP);
-   }
   }
 
   public void run(){

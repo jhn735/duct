@@ -27,13 +27,8 @@ public class CLIProcessor {
       //pick the right name, add it to the set and... 
       for(String name:dArg.getNames()){
         if(cmd.hasOption(name)){
-          dArgs.add(dArg);
-          
-          //...do more processing if needed. 
-          if(dArg.argumentRequired){
-            String argumentValue = cmd.getOptionValue(name);
-            processArgumentValue(dArg, argumentValue);
-          }
+          String argumentValue = cmd.getOptionValue(name);
+          dArgs.add(new DuctCLIArgument(dArg, argumentValue));
         }
       } 
     }
@@ -42,20 +37,7 @@ public class CLIProcessor {
   }
 
   /**
-   * Used to process arguments that have a non-boolean value associated.
-   * @param dArg The dArg associated with the argument.
-   * @param value The value associated with the argument.
-   **/
-  private void processArgumentValue(DuctCLIArgument dArg, String value){
-    switch(dArg){
-      case FILE: break;
-      case HELP: break;
-      case INTERACTIVE: break;
-    }     
-  }
- 
-  /**
-   * Contains what is essentially boilerplate code to parse the arguments with apache commons-cli lib.
+   * Contains boilerplate to parse arguments with apache commons-cli lib.
    * @param args The arguments to parse.
    * @return An interface with which to access the results of parsing.
    */
