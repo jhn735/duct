@@ -28,13 +28,6 @@ public class Duct{
   
   public Duct(List<String> args) throws ParseException{
     CLIProcessor proc = new CLIProcessor(args); 
-    for(DuctCLIArgument a:proc.ductArgs){
-      System.out.println("Ductargument::" + a.definition.name + " value: " + a.value);
-    }
-    
-    for(String b:proc.scriptArgs){
-      System.out.println("Extra:" + b);
-    }
   }
 
   public void run(){

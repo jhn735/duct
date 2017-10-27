@@ -7,16 +7,46 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 
 public class CLIProcessor {
   public final Set<DuctCLIArgument> ductArgs;
   public final List<String> scriptArgs;
 
-  public CLIProcessor(List<String> arguments) throws ParseException{
-    CommandLine cmd = parseArgs(arguments);
-    this.ductArgs = extractArgs(cmd);
-    this.scriptArgs = cmd.getArgList(); 
+  public CLIProcessor(List<String> arguments){
+    Set<DuctCLIArgument> args = new HashSet<>();
+    List<String> othArgs = new ArrayList<String>();
+
+    try{
+      CommandLine cmd = parseArgs(arguments);
+      args = extractArgs(cmd);
+      othArgs = cmd.getArgList(); 
+    } catch (UnrecognizedOptionException u){
+      args = new HashSet<>();
+      args.add(new DuctCLIArgument(ArgDef.HELP, "Error: Option '" + u.getOption()+"' unrecognized."));
+    }catch (ParseException p){
+      args = new HashSet<>();
+      args.add(new DuctCLIArgument(ArgDef.HELP, "Unable to process arguments!")); 
+    }
+    this.ductArgs = args;
+    this.scriptArgs = othArgs;
+  }
+  
+  /**
+   * Allows this class to be tested independent of the whole.
+  **/
+  public static void main(String[] args){
+    CLIProcessor p = new CLIProcessor(Arrays.asList(args));
+
+    for(DuctCLIArgument a:p.ductArgs){
+      System.out.println("Ductargument::" + a.definition.name + " value: " + a.value);
+    }
+    
+    for(String b:p.scriptArgs){
+      System.out.println("Extra:" + b);
+    }
+    
   }
 
   /**
@@ -52,6 +82,6 @@ public class CLIProcessor {
       options.addOption(dArg.shortName, dArg.name, dArg.argumentRequired, dArg.description);
 
     CommandLineParser parser = new DefaultParser();
-  return parser.parse(options, args.toArray(new String[0]), true);
+  return parser.parse(options, args.toArray(new String[0]), false);
   }
 } 
