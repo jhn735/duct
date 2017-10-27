@@ -44,10 +44,7 @@ public class DuctCLIArgument {
 
     this.definition = def;
     //if the value passed in is null, assign an empty string
-    if(argValue == null)
-      this.value = "";
-    else 
-      this.value = argValue;
+    this.value = (argValue==null) ? "" : argValue
   }
   
   //override the hashCode so that hash collections will be based on the arg definition.
