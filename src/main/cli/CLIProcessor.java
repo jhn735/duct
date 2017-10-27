@@ -13,10 +13,10 @@ public class CLIProcessor {
   public final Set<DuctCLIArgument> ductArgs;
   public final List<String> scriptArgs;
 
-  public CLIProcessor(List<String> arguments){
-    CommandLine cmd = parseargs(arguments);
+  public CLIProcessor(List<String> arguments) throws ParseException{
+    CommandLine cmd = parseArgs(arguments);
     this.ductArgs = extractArgs(cmd);
-    this.scriptArgs = cmd.getArgList() 
+    this.scriptArgs = cmd.getArgList(); 
   }
 
   /**
@@ -30,12 +30,10 @@ public class CLIProcessor {
     //gather all the arguments that have been specified given process them.
     for(ArgDef dArg:ArgDef.values()){
       //pick the right name, add it to the set and... 
-      for(String name:dArg.getNames()){
-        if(cmd.hasOption(name)){
-          String argumentValue = cmd.getOptionValue(name, "");
-          dArgs.add(new DuctCLIArgument(dArg, argumentValue));
-        }
-      } 
+      if(cmd.hasOption(dArg.name)){
+        String argumentValue = cmd.getOptionValue(dArg.name, "");
+        dArgs.add(new DuctCLIArgument(dArg, argumentValue));
+      }
     }
     
   return dArgs;
@@ -46,7 +44,7 @@ public class CLIProcessor {
    * @param args The arguments to parse.
    * @return An interface with which to access the results of parsing.
    */
-  private static CommandLine parseArgs(String[] args) throws ParseException{
+  private static CommandLine parseArgs(List<String> args) throws ParseException{
 		Options options = new Options();
 
     //for each Duct Argument defined in enumeration, create an option.
@@ -54,6 +52,6 @@ public class CLIProcessor {
       options.addOption(dArg.shortName, dArg.name, dArg.argumentRequired, dArg.description);
 
     CommandLineParser parser = new DefaultParser();
-  return parser.parse(options, args);
+  return parser.parse(options, args.toArray(new String[0]), true);
   }
 } 
