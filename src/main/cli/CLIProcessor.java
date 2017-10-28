@@ -11,17 +11,14 @@ import java.util.ArrayList;
 
 
 public class CLIProcessor {
-  public final Set<DuctCLIArgument> ductArgs;
-  public final List<String> scriptArgs;
+  public final Set<DuctCLIArgument> arguments;
 
   public CLIProcessor(List<String> arguments){
     Set<DuctCLIArgument> args = new HashSet<>();
-    List<String> othArgs = new ArrayList<String>();
 
     try{
       CommandLine cmd = parseArgs(arguments);
       args = extractArgs(cmd);
-      othArgs = cmd.getArgList(); 
     } catch (UnrecognizedOptionException u){
       args = new HashSet<>();
       args.add(new DuctCLIArgument(ArgDef.HELP, "Error: Option '" + u.getOption()+"' unrecognized."));
@@ -29,8 +26,7 @@ public class CLIProcessor {
       args = new HashSet<>();
       args.add(new DuctCLIArgument(ArgDef.HELP, "Unable to process arguments!")); 
     }
-    this.ductArgs = args;
-    this.scriptArgs = othArgs;
+    this.arguments = args;
   }
   
   /**
@@ -39,12 +35,8 @@ public class CLIProcessor {
   public static void main(String[] args){
     CLIProcessor p = new CLIProcessor(Arrays.asList(args));
 
-    for(DuctCLIArgument a:p.ductArgs){
+    for(DuctCLIArgument a:p.arguments){
       System.out.println("Ductargument::" + a.definition.name + " value: " + a.value);
-    }
-    
-    for(String b:p.scriptArgs){
-      System.out.println("Extra:" + b);
     }
     
   }
