@@ -1,6 +1,7 @@
 package duct.main.lang;
-
-public class DuctVal {
+import java.lang.Long;
+import org.apache.commons.lang3.StringUtils;
+public class DuctValue {
   public static enum Type {
     TEXT, NUMBER, BOOL, LIST, FUNCTION; 
   }
@@ -12,11 +13,12 @@ public class DuctVal {
     return this.value;
   }
 
-  public DuctVal(){
+  public DuctValue(){
     this.type = Type.TEXT;
   }
 
   public DuctValue(Type t, String val){
+    this.type = t;
     switch(t){
       case TEXT:     this.value = val; break;
       case NUMBER:   this.value = toNumber(val); break;
@@ -27,7 +29,7 @@ public class DuctVal {
     
   }
 
-  public DuctVal(DuctVal d){
+  public DuctValue(DuctVal d){
     this.type = d.type;
     this.value = d.getValue();
   }
@@ -41,9 +43,16 @@ public class DuctVal {
   public boolean equals(DuctVal obj){
     return obj.type == this.type && this.value.equals(obj.getValue());
   }
-
+  /**
+   * Interprets the string value as a number.
+  **/
   public static Number toNumber(String val){
-    return 4.56;
+    Long l;
+    try{
+      l = Long.parseLong(val);
+    }catch(NumberFormatException n){
+    }
+  return l;
   }
 
   public static Boolean toBool(String val){

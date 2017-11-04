@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.lang.Long;
 /**
  * This class loads everything that needs loading and brings up a repl when not
  * disabled by user arguments. 
@@ -24,7 +25,9 @@ public class Duct{
     Boolean b = new Boolean(" not false ");
 
     System.out.println(b.toString());
-    
+    String s = "4.235";
+    Long a = Long.parseLong(s);
+    System.out.println(a); 
   }
 
   public Duct(List<String> args){
