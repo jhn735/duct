@@ -21,8 +21,10 @@ public class Duct{
  
   public static void main(String[] args){
 		System.out.println("hello world!!");
- 
-      Duct d = new Duct(Arrays.asList(args));
+    Boolean b = new Boolean(" not false ");
+
+    System.out.println(b.toString());
+    
   }
 
   public Duct(List<String> args){
