@@ -4,11 +4,14 @@ import java.lang.System;
 import duct.main.cli.DuctCLIArgument;
 import duct.main.cli.DuctCLIArgument.ArgDef;
 import duct.main.cli.CLIProcessor;
+import duct.main.lang.DuctValue;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.Long;
+import java.lang.Number;
+import java.util.Scanner;
 /**
  * This class loads everything that needs loading and brings up a repl when not
  * disabled by user arguments. 
@@ -25,9 +28,29 @@ public class Duct{
     Boolean b = new Boolean(" not false ");
 
     System.out.println(b.toString());
-    String s = "4.235";
-    Long a = Long.parseLong(s);
-    System.out.println(a); 
+    //String s = "4235+4569";
+    //Object a = Long.parseLong(s);
+
+
+    Scanner s = new Scanner(System.in);
+    String val = "";
+    try{
+      do{
+        val = s.nextLine();
+        DuctValue d = DuctValue.parseDuctValue(val);
+        System.out.println(val);
+        System.out.println(d.type.name()); 
+      }while(true);
+    }catch(java.text.ParseException e){
+      System.out.println(e.getMessage());     
+      System.out.println(e.getErrorOffset());     
+      System.out.println(val.charAt(e.getErrorOffset()));     
+
+    }
+    //if(a instanceof Double)
+    //  System.out.println("THis value is a not long!!!");
+    //System.out.println(a.getClass()); 
+    //System.out.println(a);
   }
 
   public Duct(List<String> args){
