@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.lang.Long;
 import java.lang.Number;
 import java.util.Scanner;
+import java.io.StringReader;
+import org.apache.commons.lang3.StringUtils;
 /**
  * This class loads everything that needs loading and brings up a repl when not
  * disabled by user arguments. 
@@ -24,28 +26,22 @@ public class Duct{
   protected Map<String, Object> config; 
  
   public static void main(String[] args){
-		System.out.println("hello world!!");
-    Boolean b = new Boolean(" not false ");
-
-    System.out.println(b.toString());
-    //String s = "4235+4569";
-    //Object a = Long.parseLong(s);
-
-
     Scanner s = new Scanner(System.in);
     String val = "";
     try{
-      do{
+      for(int i = 0; i<5; i++){
         val = s.nextLine();
-        DuctValue d = DuctValue.parseDuctValue(val);
-        System.out.println(val);
+        StringReader r = new StringReader(val);
+        DuctValue d = DuctValue.nextDuctValue(r);
         System.out.println(d.type.name()); 
-      }while(true);
+      }
     }catch(java.text.ParseException e){
       System.out.println(e.getMessage());     
       System.out.println(e.getErrorOffset());     
-      System.out.println(val.charAt(e.getErrorOffset()));     
-
+      System.out.println(val);
+      System.out.println(StringUtils.repeat(' ', e.getErrorOffset()-1) + "^");
+    }catch(java.io.IOException i){
+      System.out.println(i.getMessage());
     }
     //if(a instanceof Double)
     //  System.out.println("THis value is a not long!!!");
