@@ -39,7 +39,7 @@ public class Duct{
       System.out.println(e.getMessage());     
       System.out.println(e.getErrorOffset());     
       System.out.println(val);
-      System.out.println(StringUtils.repeat(' ', e.getErrorOffset()-1) + "^");
+      System.out.println(StringUtils.repeat(' ', e.getErrorOffset()) + "^");
     }catch(java.io.IOException i){
       System.out.println(i.getMessage());
     }

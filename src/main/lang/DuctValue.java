@@ -133,12 +133,13 @@ public class DuctValue {
     StringBuilder extractedValue = new StringBuilder();
     //make sure to get number of charecters read, in case a parse exception is thrown.
     int charCount = 0;
-    int valueStart = 0;
     char curChar = readNextChar(reader);
     charCount++;
     //throw a fit if the value is not started properly
     if(curChar != '<')
       throw new ParseException(valueNotEnclosedMessage, charCount);
+
+    int valueStart = charCount;
 
     //working on the assumption that the first '<' is there. otherwise an exception would have been thrown at this point.
     long enclosureDepth = 1;
@@ -163,9 +164,9 @@ public class DuctValue {
             try{
              type = Type.parseType(extractedValue);
             }catch (ParseException p){
-             throw new ParseException(p.getMessage(), p.getErrorOffset() + charCount);
+             throw new ParseException(p.getMessage(), p.getErrorOffset() + valueStart);
             }
-
+            
             extractedValue.setLength(0);
             typeExtracted = true;
             valueStart = charCount+1;
