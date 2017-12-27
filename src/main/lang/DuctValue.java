@@ -19,7 +19,7 @@ import java.io.StringReader;
 public class DuctValue {
 
   public static enum Type {
-    TEXT, NUMBER, BOOL, LIST, FUNCTION; 
+    TEXT, NUMBER, BOOL, LIST, SCRIPT; 
     public static Type parseType(CharSequence extractedType) throws ParseException{
       for(Type t:Type.values()){
         String name = t.name();
@@ -55,9 +55,10 @@ public class DuctValue {
     switch(t){
       case TEXT:     this.value = interpretString(val); break;
       case NUMBER:   this.value = interpretNumber(val); break;
-      case BOOL:     this.value = interpretBool(val); break;
-      case LIST:     this.value = interpretList(val); break;
-      case FUNCTION: this.value = interpretFunction(val); break;
+      case BOOL:     this.value = interpretBool(val);   break;
+      case LIST:     this.value = interpretList(val);   break;
+      case SCRIPT:   this.value = interpretScript(val); break;
+      default: throw new ParseException("Cannot interpret value with type given." , 0);
     }
   }
   
@@ -79,7 +80,7 @@ public class DuctValue {
   }
 
   /**
-   * Interprets the string value as a number.
+   * Interprets the string value as a number. It first tries to interpret as a long and then as a double.
   **/
   public static Number interpretNumber(CharSequence value) throws ValueInitException{
     Number n = null;
@@ -108,7 +109,10 @@ public class DuctValue {
 
   return Boolean.parseBoolean(value.toString());
   }
-
+  /*
+   * Interprets the char sequence value as a list of Duct Values.
+   * @return A list a Duct values if one exists
+  */
   public static List<DuctValue> interpretList(CharSequence value) throws ValueInitException, ParseException{
     List<DuctValue> listValue = new ArrayList<DuctValue>();
     try{
@@ -122,9 +126,10 @@ public class DuctValue {
         r.mark(0);
       }
     } catch(IOException i){
+      throw new ParseException("Unable to read source string.", 0);
     }
     
-    return listValue;
+  return listValue;
   }
 
   private static final String valueNotEnclosedMessage = "A value must open with '<' and close with '>'";
@@ -143,24 +148,22 @@ public class DuctValue {
 
     //working on the assumption that the first '<' is there. otherwise an exception would have been thrown at this point.
     long enclosureDepth = 1;
-    //a flag used to determine whether or not the type was extracted.
-    boolean typeExtracted = false;
-    Type type = Type.TEXT;
+    Type type = null;
 
     do{
       curChar = readNextChar(reader);
       charCount++;
       
       switch(curChar){
-        //we only need to worry about matching pairs of '<' and '>' in lists and functions.
+        //we only need to worry about matching pairs of '<' and '>' in lists and scripts.
         case '<': 
-          if(type == Type.LIST || type == Type.FUNCTION) 
+          if(type == Type.LIST || type == Type.SCRIPT)
             enclosureDepth++; 
         break;
         case '>': enclosureDepth--; break;
         case ':': { 
           //if the type has not been extracted, try to parse the type with the characters gathered and 'clear' them.
-          if(!typeExtracted){
+          if(type == null){
             try{
              type = Type.parseType(extractedValue);
             }catch (ParseException p){
@@ -168,10 +171,11 @@ public class DuctValue {
             }
             
             extractedValue.setLength(0);
-            typeExtracted = true;
             valueStart = charCount+1;
+          //moving on to the next character.
+          continue; 
           }
-        continue; 
+        break;
         }
         case '\\': {
           extractedValue.append(curChar);
@@ -180,10 +184,13 @@ public class DuctValue {
         break;
         }
       }
-      //we want everything except the outermost '<' and '>'
+      //we want to capture everything except the outermost '<' and '>'
       if(enclosureDepth > 0) 
         extractedValue.append(curChar);
     } while(enclosureDepth > 0);
+    
+    if(type == null)
+        throw new ParseException("A type must be specified for each value.", valueStart);
 
     DuctValue d = null;
 
@@ -203,10 +210,12 @@ public class DuctValue {
   return (char)curChar;
   }
 
-  //a function in duct is a script in and of itself. Running a function will spawn a new duct environment or process, I haven't decided yet.
-  //methinks that a special object will be needed to acheive anything in the way of efficiency for function calls.
-  public static List<String> interpretFunction(CharSequence val) throws ValueInitException{
+  /**
+   * Saves the value as a string, parsing later upon execution.
+   * @return The string value of the value given.
+  **/
+  public static String interpretScript(CharSequence value) throws ValueInitException{
     
-    return new ArrayList<String>();
+    return value.toString();
   }
 }
