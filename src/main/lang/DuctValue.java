@@ -1,6 +1,8 @@
 package duct.main.lang;
 import java.lang.Long;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.lang.Long;
@@ -19,7 +21,7 @@ import java.io.StringReader;
 public class DuctValue {
 
   public static enum Type {
-    TEXT, NUMBER, BOOL, LIST, SCRIPT; 
+    TEXT, NUMBER, BOOL, LIST, SCRIPT, SET; 
     public static Type parseType(CharSequence extractedType) throws ParseException{
       for(Type t:Type.values()){
         String name = t.name();
@@ -40,6 +42,7 @@ public class DuctValue {
   
   public final Type type;
   protected Object value;
+  public final String name;
 
   public Object getValue(){
     return this.value;
@@ -47,16 +50,20 @@ public class DuctValue {
 
   protected DuctValue(){
     this.type = Type.TEXT;
+    this.name = "";
     this.value = null;
   }
 
-  public DuctValue(Type t, CharSequence val) throws ParseException{
+  public DuctValue(Type t, CharSequence name, CharSequence val) throws ParseException{
     this.type = t;
+    
+    this.name = (name == null)?"":name.toString();
     switch(t){
       case TEXT:     this.value = interpretString(val); break;
       case NUMBER:   this.value = interpretNumber(val); break;
       case BOOL:     this.value = interpretBool(val);   break;
       case LIST:     this.value = interpretList(val);   break;
+      case SET:      this.value = interpretSet(val); break;      
       case SCRIPT:   this.value = interpretScript(val); break;
       default: throw new ParseException("Cannot interpret value with type given." , 0);
     }
@@ -65,6 +72,7 @@ public class DuctValue {
   public DuctValue(DuctValue d){
     this.type = d.type;
     this.value = d.getValue();
+    this.name = d.name;
   }
 
   public String toString(){
@@ -132,6 +140,14 @@ public class DuctValue {
   return listValue;
   }
 
+  /*
+   * Interprets the char sequence value as a set of named duct values.
+   * @return A set of named duct values if one exists
+  */
+  public static Map<String, DuctValue> interpretSet(CharSequence value) throws ValueInitException, ParseException {
+  return new HashMap<String, DuctValue>();
+  }
+
   private static final String valueNotEnclosedMessage = "A value must open with '<' and close with '>'";
   private static final String prematureEndOfStream = "The possed in value ended prematurely";
   public static DuctValue nextDuctValue(Reader reader) throws ParseException, IOException {
@@ -149,18 +165,33 @@ public class DuctValue {
     //working on the assumption that the first '<' is there. otherwise an exception would have been thrown at this point.
     long enclosureDepth = 1;
     Type type = null;
+    String name = null;
 
+    //Read character loop, calling continue simple means skipping to the next character.
     do{
       curChar = readNextChar(reader);
       charCount++;
       
       switch(curChar){
+        //this indicates that the value is named something. The name of the value can only be specified before the type is specified, hence the null check.
+        case '#':
+          if(type == null){
+            name = extractedValue.toString();
+            extractedValue.setLength(0);
+            continue;
+          //if the the type is text then we can assume that the '#' is a part of the text value. Otherwise an error has occurred.
+          } else if(type != Type.TEXT) {
+            throw new ParseException("The name or identifier of a value must be specified before it's type is specified.", valueStart);
+          }
+        break;
         //we only need to worry about matching pairs of '<' and '>' in lists and scripts.
         case '<': 
           if(type == Type.LIST || type == Type.SCRIPT)
             enclosureDepth++; 
         break;
-        case '>': enclosureDepth--; break;
+        case '>': 
+          enclosureDepth--; 
+        break;
         case ':': { 
           //if the type has not been extracted, try to parse the type with the characters gathered and 'clear' them.
           if(type == null){
@@ -195,8 +226,8 @@ public class DuctValue {
     DuctValue d = null;
 
     try{ 
-      //Attempt to parse the value having parsed the type and extracted the string value.  
-      d = new DuctValue(type, extractedValue);
+      //Attempt to parse the value having parsed the type and extracted the name and the string value.  
+      d = new DuctValue(type, name, extractedValue);
     }catch(ParseException p) {
       throw new ParseException(p.getMessage(), p.getErrorOffset() + valueStart);
     }

@@ -34,6 +34,7 @@ public class Duct{
         StringReader r = new StringReader(val);
         DuctValue d = DuctValue.nextDuctValue(r);
         System.out.println(d.type.name()); 
+        System.out.println(d.name);
       }
     }catch(java.text.ParseException e){
       System.out.println(e.getMessage());     
