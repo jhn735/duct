@@ -21,7 +21,7 @@ import java.io.StringReader;
 public class DuctValue {
 
   public static enum Type {
-    TEXT(false), NUMBER(false), BOOL(false), LIST(true), SCRIPT(true), SET(true); 
+    TEXT(false), NUMBER(false), BOOL(false), MODULE(false), LIST(true), SCRIPT(true), SET(true); 
     public final boolean isContainer;
     private Type(boolean isCont){
       this.isContainer = isCont;
@@ -58,18 +58,20 @@ public class DuctValue {
     this.value = null;
   }
 
-  public DuctValue(Type t, CharSequence name, CharSequence val) throws ParseException{
+  public DuctValue(Type t, CharSequence name, CharSequence value) throws ParseException{
     this.type = t;
     
-    this.name = (name == null)?"":name.toString();
+    this.name = (name == null)? "":name.toString();
+
     switch(t){
-      case TEXT:     this.value = interpretString(val); break;
-      case NUMBER:   this.value = interpretNumber(val); break;
-      case BOOL:     this.value = interpretBool(val);   break;
-      case LIST:     this.value = interpretList(val);   break;
-      case SET:      this.value = interpretSet(val); break;      
-      case SCRIPT:   this.value = interpretScript(val); break;
-      default: throw new ParseException("Cannot interpret value with type given." , 0);
+      case TEXT:   this.value = interpretString(value); break;
+      case NUMBER: this.value = interpretNumber(value); break;
+      case BOOL:   this.value = interpretBool(value);   break;
+      case MODULE: this.value = interpretModule(value); break;
+      case LIST:   this.value = interpretList(value);   break;
+      case SET:    this.value = interpretSet(value);    break;      
+      case SCRIPT: this.value = interpretScript(value); break;
+      default:     throw new ParseException("Cannot interpret value with type given." , 0);
     }
   }
   
@@ -114,7 +116,7 @@ public class DuctValue {
    * @return If the value is either 'true' or 'false' it returns that value else,
    *    an exception is thrown.
   **/
-  public static Boolean interpretBool(CharSequence value) throws ValueInitException{
+  public static Boolean interpretBool(CharSequence value) throws ValueInitException {
     value = StringUtils.trimToEmpty(value.toString()).toLowerCase();
     if(!boolStringValues.contains(value))
       throw new ValueInitException("Value given '"+value+"' is not a boolean value.", 0); 
@@ -122,6 +124,9 @@ public class DuctValue {
   return Boolean.parseBoolean(value.toString());
   }
 
+  public static String interpretModule(CharSequence value) throws ValueInitException {
+    return value.toString();
+  }
   private static final String SRC_READ_ERROR_MSG = "Unabe to read source";
 
   /*
