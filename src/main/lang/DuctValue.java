@@ -161,8 +161,9 @@ public class DuctValue {
   return set;
   }
 
-  private static final String valueNotEnclosedMessage = "A value must open with '<' and close with '>'";
-  private static final String prematureEndOfStream = "The possed in value ended prematurely";
+  private static final String VALUE_NOT_ENCLOSED_MSG = "A value must open with '<' and close with '>'";
+  private static final String PREMATURE_END_OF_STREAM_MSG = "The passed in value ended prematurely";
+  private static final String IDENTIFIER_ORDER_ERR_MSG = "The name or identifier of a value must be specified before it's type is specified.";
   public static DuctValue nextDuctValue(Reader reader) throws ParseException, IOException {
     StringBuilder extractedValue = new StringBuilder();
     //make sure to get number of charecters read, in case a parse exception is thrown.
@@ -171,7 +172,7 @@ public class DuctValue {
     charCount++;
     //throw a fit if the value is not started properly
     if(curChar != '<')
-      throw new ParseException(valueNotEnclosedMessage, charCount);
+      throw new ParseException(VALUE_NOT_ENCLOSED_MSG, charCount);
 
     int valueStart = charCount;
 
@@ -193,13 +194,13 @@ public class DuctValue {
             extractedValue.setLength(0);
             continue;
           //if the the type is text then we can assume that the '#' is a part of the text value. Otherwise an error has occurred.
-          } else if(type != Type.TEXT) {
-            throw new ParseException("The name or identifier of a value must be specified before it's type is specified.", valueStart);
+          } else if(type != Type.TEXT ) {
+            throw new ParseException( IDENTIFIER_ORDER_ERR_MSG, valueStart);
           }
         break;
         //we only need to worry about matching pairs of '<' and '>' in lists and scripts.
         case '<': 
-          if(type == Type.LIST || type == Type.SCRIPT)
+          if(type == Type.LIST || type == Type.SCRIPT || type == Type.SET)
             enclosureDepth++; 
         break;
         case '>': 
@@ -250,7 +251,7 @@ public class DuctValue {
   private static char readNextChar(Reader reader) throws IOException, ParseException{
     int curChar = reader.read();
     if(curChar < 0)
-      throw new ParseException(prematureEndOfStream, 0);
+      throw new ParseException(PREMATURE_END_OF_STREAM_MSG, 0);
   return (char)curChar;
   }
 
