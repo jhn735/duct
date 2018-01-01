@@ -21,7 +21,11 @@ import java.io.StringReader;
 public class DuctValue {
 
   public static enum Type {
-    TEXT, NUMBER, BOOL, LIST, SCRIPT, SET; 
+    TEXT(false), NUMBER(false), BOOL(false), LIST(true), SCRIPT(true), SET(true); 
+    public final boolean isContainer;
+    private Type(boolean isCont){
+      this.isContainer = isCont;
+    }
     public static Type parseType(CharSequence extractedType) throws ParseException{
       for(Type t:Type.values()){
         String name = t.name();
@@ -164,6 +168,7 @@ public class DuctValue {
   private static final String VALUE_NOT_ENCLOSED_MSG = "A value must open with '<' and close with '>'";
   private static final String PREMATURE_END_OF_STREAM_MSG = "The passed in value ended prematurely";
   private static final String IDENTIFIER_ORDER_ERR_MSG = "The name or identifier of a value must be specified before it's type is specified.";
+  private static final String TYPE_ALREADY_SPECIFIED_ERR_MSG = "The type has already been specified for this value.";
   public static DuctValue nextDuctValue(Reader reader) throws ParseException, IOException {
     StringBuilder extractedValue = new StringBuilder();
     //make sure to get number of charecters read, in case a parse exception is thrown.
@@ -181,32 +186,40 @@ public class DuctValue {
     Type type = null;
     String name = null;
 
-    //Read character loop, calling continue simple means skipping to the next character.
     do{
       curChar = readNextChar(reader);
       charCount++;
-      
+      //the reason I have each case adding the current character to the extracted value rather than having that code after the switch statement is to simplify 
+      //the control flow. No need to make assumptions about what should occur outside of the code within that case statement. Each is responsible to wrap things up. 
       switch(curChar){
         //this indicates that the value is named something. The name of the value can only be specified before the type is specified, hence the null check.
         case '#':
           if(type == null){
             name = extractedValue.toString();
             extractedValue.setLength(0);
-            continue;
           //if the the type is text then we can assume that the '#' is a part of the text value. Otherwise an error has occurred.
-          } else if(type != Type.TEXT ) {
+          //also if the type is a container and are currently reading a contained value, it will be parsed later on it's own merit anyway. 
+          } else if(type != Type.TEXT && !(enclosureDepth > 1 && type.isContainer)) {
             throw new ParseException( IDENTIFIER_ORDER_ERR_MSG, valueStart);
+          } else {
+            extractedValue.append(curChar);
           }
         break;
-        //we only need to worry about matching pairs of '<' and '>' in lists and scripts.
+
+        //we only need to worry about matching pairs of '<' and '>' in lists, sets and scripts.
         case '<': 
-          if(type == Type.LIST || type == Type.SCRIPT || type == Type.SET)
+          if(type.isContainer)
             enclosureDepth++; 
+          extractedValue.append(curChar);
         break;
+
         case '>': 
           enclosureDepth--; 
+          if(enclosureDepth > 0)
+            extractedValue.append(curChar);
         break;
-        case ':': { 
+
+        case ':':  
           //if the type has not been extracted, try to parse the type with the characters gathered and 'clear' them.
           if(type == null){
             try{
@@ -217,21 +230,25 @@ public class DuctValue {
             
             extractedValue.setLength(0);
             valueStart = charCount+1;
-          //moving on to the next character.
-          continue; 
+          //otherwise throw an error if the type has already been specified.
+          } else if(type != Type.TEXT && !(enclosureDepth > 1 && type.isContainer)){
+            throw new ParseException(TYPE_ALREADY_SPECIFIED_ERR_MSG, valueStart);
+          //finally if nothing else is going on, add the current character to the extracted value.
+          } else {
+            extractedValue.append(curChar);
           }
         break;
-        }
-        case '\\': {
+        
+        case '\\': 
           extractedValue.append(curChar);
           curChar = readNextChar(reader); 
           charCount++;
+          extractedValue.append(curChar);
         break;
-        }
+        
+        default: 
+          extractedValue.append(curChar);
       }
-      //we want to capture everything except the outermost '<' and '>'
-      if(enclosureDepth > 0) 
-        extractedValue.append(curChar);
     } while(enclosureDepth > 0);
     
     if(type == null)
