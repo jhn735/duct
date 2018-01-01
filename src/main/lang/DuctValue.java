@@ -117,8 +117,11 @@ public class DuctValue {
 
   return Boolean.parseBoolean(value.toString());
   }
+
+  private static final String SRC_READ_ERROR_MSG = "Unabe to read source";
+
   /*
-   * Interprets the char sequence value as a list of Duct Values.
+   * Interprets the char sequence value as a list of Duct Values. Values are accessed from a list by calling it as a function with the index passed as a parameter.
    * @return A list a Duct values if one exists
   */
   public static List<DuctValue> interpretList(CharSequence value) throws ValueInitException, ParseException{
@@ -134,18 +137,28 @@ public class DuctValue {
         r.mark(0);
       }
     } catch(IOException i){
-      throw new ParseException("Unable to read source string.", 0);
+      throw new ParseException( SRC_READ_ERROR_MSG, 0);
     }
     
   return listValue;
   }
 
   /*
-   * Interprets the char sequence value as a set of named duct values.
+   * Interprets the char sequence value as a set of named duct values. Accessing values from a set is similar to accessing values from a list, only rather than an index, a name is given.
    * @return A set of named duct values if one exists
   */
   public static Map<String, DuctValue> interpretSet(CharSequence value) throws ValueInitException, ParseException {
-  return new HashMap<String, DuctValue>();
+    Map<String,DuctValue> set = new HashMap<String, DuctValue>();
+
+    //the result of 'interpretList' will always be a super set of the result of 'interpretSet'
+    List<DuctValue> valueList = interpretList(value);
+
+   //if the value has no name then the value can't be accessed so there is no point in adding it to the set.
+    for(DuctValue d:valueList)
+      if(!StringUtils.isEmpty(d.name))
+        set.put(d.name, d);
+
+  return set;
   }
 
   private static final String valueNotEnclosedMessage = "A value must open with '<' and close with '>'";
