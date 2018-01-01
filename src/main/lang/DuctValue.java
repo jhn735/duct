@@ -60,8 +60,6 @@ public class DuctValue {
 
   public DuctValue(Type t, CharSequence name, CharSequence value) throws ParseException{
     this.type = t;
-    
-    this.name = (name == null)? "":name.toString();
 
     switch(t){
       case TEXT:   this.value = interpretString(value); break;
@@ -73,6 +71,11 @@ public class DuctValue {
       case SCRIPT: this.value = interpretScript(value); break;
       default:     throw new ParseException("Cannot interpret value with type given." , 0);
     }
+    
+    if(t == Type.MODULE && (name == null || name.toString().isEmpty()))
+      this.name = (String) this.value;
+    else 
+      this.name = (name == null)? "":name.toString();
   }
   
   public DuctValue(DuctValue d){
