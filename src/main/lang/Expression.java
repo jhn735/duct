@@ -88,6 +88,10 @@ public class Expression implements Evaluable{
           }
           evaluables.add(exe.getValue(name));
         break;
+        //Anything else should cause an error to be thrown.
+        default:
+          if(!Character.isWhitespace(curChar))
+            throw new ParseException("Character '" + curChar + "' is not valid.", charCount); 
       }
     } while(curChar != ')');
 
