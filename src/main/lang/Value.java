@@ -18,7 +18,7 @@ import java.io.Reader;
 import java.io.IOException;
 import java.io.StringReader;
 
-public class DuctValue {
+public class Value implements Evaluable{
 
   public static enum Type {
     TEXT(false), NUMBER(false), BOOL(false), MODULE(false), LIST(true), SCRIPT(true), SET(true); 
@@ -52,13 +52,13 @@ public class DuctValue {
     return this.value;
   }
 
-  protected DuctValue(){
+  protected Value(){
     this.type = Type.TEXT;
     this.name = "";
     this.value = null;
   }
 
-  public DuctValue(Type t, CharSequence name, CharSequence value) throws ParseException{
+  public Value(Type t, CharSequence name, CharSequence value) throws ParseException{
     this.type = t;
 
     switch(t){
@@ -78,17 +78,21 @@ public class DuctValue {
       this.name = (name == null)? "":name.toString();
   }
   
-  public DuctValue(DuctValue d){
+  public Value(Value d){
     this.type = d.type;
     this.value = d.getValue();
     this.name = d.name;
+  }
+
+  public Value evaluate(){
+    return this;
   }
 
   public String toString(){
     return value.toString();
   }
     
-  public boolean equals(DuctValue obj){
+  public boolean equals(Value obj){
     return obj.type == this.type && this.value.equals(obj.getValue());
   }
   
@@ -136,8 +140,8 @@ public class DuctValue {
    * Interprets the char sequence value as a list of Duct Values. Values are accessed from a list by calling it as a function with the index passed as a parameter.
    * @return A list a Duct values if one exists
   */
-  public static List<DuctValue> interpretList(CharSequence value) throws ValueInitException, ParseException{
-    List<DuctValue> listValue = new ArrayList<DuctValue>();
+  public static List<Value> interpretList(CharSequence value) throws ValueInitException, ParseException{
+    List<Value> listValue = new ArrayList<Value>();
     try{
       StringReader r = new StringReader(value.toString());
       r.mark(0);
@@ -145,7 +149,7 @@ public class DuctValue {
       while(r.read() >= 0 ){
         r.reset();
 
-        listValue.add(nextDuctValue(r));       
+        listValue.add(nextValue(r));       
         r.mark(0);
       }
     } catch(IOException i){
@@ -159,14 +163,14 @@ public class DuctValue {
    * Interprets the char sequence value as a set of named duct values. Accessing values from a set is similar to accessing values from a list, only rather than an index, a name is given.
    * @return A set of named duct values if one exists
   */
-  public static Map<String, DuctValue> interpretSet(CharSequence value) throws ValueInitException, ParseException {
-    Map<String,DuctValue> set = new HashMap<String, DuctValue>();
+  public static Map<String, Value> interpretSet(CharSequence value) throws ValueInitException, ParseException {
+    Map<String,Value> set = new HashMap<String, Value>();
 
     //the result of 'interpretList' will always be a super set of the result of 'interpretSet'
-    List<DuctValue> valueList = interpretList(value);
+    List<Value> valueList = interpretList(value);
 
    //if the value has no name then the value can't be accessed so there is no point in adding it to the set.
-    for(DuctValue d:valueList)
+    for(Value d:valueList)
       if(!StringUtils.isEmpty(d.name))
         set.put(d.name, d);
 
@@ -174,14 +178,13 @@ public class DuctValue {
   }
 
   private static final String VALUE_NOT_ENCLOSED_MSG = "A value must open with '<' and close with '>'";
-  private static final String PREMATURE_END_OF_STREAM_MSG = "The passed in value ended prematurely";
   private static final String IDENTIFIER_ORDER_ERR_MSG = "The name or identifier of a value must be specified before it's type is specified.";
   private static final String TYPE_ALREADY_SPECIFIED_ERR_MSG = "The type has already been specified for this value.";
-  public static DuctValue nextDuctValue(Reader reader) throws ParseException, IOException {
+  public static Value nextValue(Reader reader) throws ParseException, IOException {
     StringBuilder extractedValue = new StringBuilder();
     //make sure to get number of charecters read, in case a parse exception is thrown.
     int charCount = 0;
-    char curChar = readNextChar(reader);
+    char curChar = ParseUtils.readNextChar(reader);
     charCount++;
     //throw a fit if the value is not started properly
     if(curChar != '<')
@@ -195,7 +198,7 @@ public class DuctValue {
     String name = null;
 
     do{
-      curChar = readNextChar(reader);
+      curChar = ParseUtils.readNextChar(reader);
       charCount++;
       //the reason I have each case adding the current character to the extracted value rather than having that code after the switch statement is to simplify 
       //the control flow. No need to make assumptions about what should occur outside of the code within that case statement. Each is responsible to wrap things up. 
@@ -249,7 +252,7 @@ public class DuctValue {
         
         case '\\': 
           extractedValue.append(curChar);
-          curChar = readNextChar(reader); 
+          curChar = ParseUtils.readNextChar(reader); 
           charCount++;
           extractedValue.append(curChar);
         break;
@@ -262,24 +265,17 @@ public class DuctValue {
     if(type == null)
         throw new ParseException("A type must be specified for each value.", valueStart);
 
-    DuctValue d = null;
+    Value d = null;
 
     try{ 
       //Attempt to parse the value having parsed the type and extracted the name and the string value.  
-      d = new DuctValue(type, name, extractedValue);
+      d = new Value(type, name, extractedValue);
     }catch(ParseException p) {
       throw new ParseException(p.getMessage(), p.getErrorOffset() + valueStart);
     }
   return d;
   }     
   
-  private static char readNextChar(Reader reader) throws IOException, ParseException{
-    int curChar = reader.read();
-    if(curChar < 0)
-      throw new ParseException(PREMATURE_END_OF_STREAM_MSG, 0);
-  return (char)curChar;
-  }
-
   /**
    * Saves the value as a string, parsing later upon execution.
    * @return The string value of the value given.

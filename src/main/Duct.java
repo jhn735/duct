@@ -4,7 +4,7 @@ import java.lang.System;
 import duct.main.cli.DuctCLIArgument;
 import duct.main.cli.DuctCLIArgument.ArgDef;
 import duct.main.cli.CLIProcessor;
-import duct.main.lang.DuctValue;
+import duct.main.lang.Value;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class Duct{
       for(int i = 0; i<5; i++){
         val = s.nextLine();
         StringReader r = new StringReader(val);
-        DuctValue d = DuctValue.nextDuctValue(r);
+        Value d = Value.nextValue(r);
         System.out.println(d.type.name()); 
         System.out.println(d.name);
       }
