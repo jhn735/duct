@@ -55,7 +55,7 @@ public class Expression implements Evaluable{
     //assuming the basic stuff is out the way, get the name of the operation and then
     //get the operation.
     StringBuilder name = new StringBuilder();
-    while(curChar != ' '){
+    while(!Character.isWhilespace(curChar)){
       curChar = ParseUtils.readNextChar(pReader);
       charCount++;
       name.append(curChar); 
@@ -70,7 +70,7 @@ public class Expression implements Evaluable{
       switch(curChar){
         case '(': 
           pReader.unread(curChar);
-          evaluables.add(Expression.nextExpression(reader, exe));
+          evaluables.add(Expression.nextExpression(pReader, exe));
         break;
         
         //if the character is a '<' get the value it's suppose to represent
@@ -91,7 +91,7 @@ public class Expression implements Evaluable{
         //Anything else should cause an error to be thrown.
         default:
           if(!Character.isWhitespace(curChar))
-            throw new ParseException("Character '" + curChar + "' is not valid.", charCount); 
+            throw new ParseException("Character '" + curChar + "' is not a valid start for either a variable, an expression or a value declaration.", charCount); 
       }
     } while(curChar != ')');
 
