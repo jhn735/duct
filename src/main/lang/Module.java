@@ -2,41 +2,45 @@ package duct.main.lang;
 import java.lang.CharSequence;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 import java.nio.charset.Charset;
 
 /**
  * Making the module an abstract and not an interface so that I can better control
  * how the application is extended. The executor is an interface because there is
  * less of a need control how it does things vs a Module.
- * Also, a module may be instantiated on the fly depending on what direction I 
- * think the project will go.
+ * A module can be considered an immutable set of operations.
 **/
-public abstract class Module{
+public abstract class Module extends HashSet<Operation>{
   private static final Charset DEFAULT_CHARSET = java.nio.charset.StandardCharsets.UTF_8;
   //The name of the module which must be set when extending this class.
-  public final String Name;
+  public final String name;
 
+  public final Executor executor;
   protected Map<String, byte[]> settings;
 
   /**
     * Please note that the name must not be null otherwise this will be problem for your module.
    **/
-  public Module(CharSequence name, Map<String, byte[]> settings){
-    this.Name = name.toString();
+  public Module(CharSequence name, Collection<Operation> operations, Executor exe, Map<String, byte[]> settings){
+    super(operations);
+    this.name = name.toString();
     this.settings = new HashMap<String, byte[]>(settings); 
+    this.executor = exe;
   } 
   
-  public Module(CharSequence name){
-   this.Name = name.toString(); 
-   this.settings = new HashMap<String, byte[]>() 
+  public Module(CharSequence name, Collection<Operation> operations, Executor exe){
+   super(operations);
+   this.name = name.toString(); 
+   this.settings = new HashMap<String, byte[]>(); 
+   this.executor = exe;
   }
 
-  /**
-    * Retrieves the operations available within this module mapped to their names.
-    * @return A Map between the names of the operations and the operation objects available within this module.
-   **/
-  public Map<String, Operation> operations();
-  
+  @Override
+  public boolean add(Operation e){
+    return this.Contains(e);
+  }
   /**
     * Stores the given object into the settings map for long term storage.
     * Unless overriden, it stores the bytes from the results of the object's toString() function with UTF-8 encoding.
