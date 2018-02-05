@@ -44,11 +44,18 @@ public abstract class Module{
     * @param obj The object representing the value of the property.
    **/
   public void storeProperty(CharSequence name, Object obj){
-    if(settings == null)
-      settings = new HashMap<String, byte[]>();
-    settings.put(name.toString(), obj.toString().getBytes(DEFAULT_CHARSET));
+    this.storeProperty(name, obj.toString());
   }  
-  
+
+  /**
+    * Stores the given object into the settings map for long term storage.
+    * Unless overriden, it stores the bytes from the given string's UTF-8 encoding.
+    * @param name The name of the property to store the value under.
+    * @param obj The string representing the value of the property.
+   **/
+  public void storeProperty(CharSequence name, String obj){
+    this.settings().put(name.toString(), obj.getBytes(DEFAULT_CHARSET));
+  } 
   /**
     * A function for the retrieval of the modules settings to be store in long term storage. 
     * Storing value in bytes for the module to handle for itself. 
