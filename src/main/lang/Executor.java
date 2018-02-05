@@ -31,9 +31,9 @@ public interface Executor {
   
   /**
     * Given the name of a module and the name of a file, retrieves the contents of a stored file associated with it.
-    * @param moduleName The name of the module associated with the file. 
+    * @param module The module associated with the file. 
     * @param fileName The name of the file to be retrieved.
     * @return An inputStream object representing the file.
    **/
-   public InputStream moduleFile(CharSequence moduleName, CharSequence fileName);
+   public InputStream moduleFile(Module module, CharSequence fileName);
 }
