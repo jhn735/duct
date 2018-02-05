@@ -1,5 +1,7 @@
 package duct.main.lang;
 import java.lang.CharSequence;
+import java.util.Map;
+import java.io.InputStream;
 
 /**
  * Don't care how the executor does what it needs to do. Different 
@@ -25,5 +27,13 @@ public interface Executor {
     * @param moduleName The name of the module.
     * @return A map of settings to be used by the module in question. If no settings are saved an empty map is returned.
    **/
-  public Map<String, String> moduleSettings(CharSequence moduleName);
+  public Map<String, byte[]> moduleSettings(CharSequence moduleName);
+  
+  /**
+    * Given the name of a module and the name of a file, retrieves the contents of a stored file associated with it.
+    * @param moduleName The name of the module associated with the file. 
+    * @param fileName The name of the file to be retrieved.
+    * @return An inputStream object representing the file.
+   **/
+   public InputStream moduleFile(CharSequence moduleName, CharSequence fileName);
 }
