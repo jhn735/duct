@@ -37,9 +37,21 @@ public abstract class Module extends HashSet<Operation>{
    this.executor = exe;
   }
 
+  /**
+    * Overrided the 'add' method to prevent changing the contents of the set.
+   **/
   @Override
   public boolean add(Operation e){
-    return this.Contains(e);
+    return this.contains(e);
+  }
+
+  
+  /**
+    * Overrided the 'remove' method to prevent changing the contents of the set.
+   **/
+  @Override
+  public boolean remove(Object o){
+    return this.contains(o);
   }
   /**
     * Stores the given object into the settings map for long term storage.
