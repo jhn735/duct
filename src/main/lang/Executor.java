@@ -21,6 +21,21 @@ public interface Executor {
     * @return A value object representing the value of the variable retrieved.
    **/
   public Value getValue(CharSequence identifier);    
+
+  /**
+    * Retrieves the module which has the given identifier associated. 
+    * That is it retrieves the module which has had the given alias assigned to it. 
+    * @param identifier The alias assigned to the requested module.
+    * @return A module object representing the module that was associated with the identifier.
+   **/
+   public Module getModule(CharSequence identifier);
+
+  /**
+    * Loads the module with the given name and returns it. If already loaded, simply returns the module.
+    * @param name The name of the module to load.
+    * @return A module object representing the module that was loaded.
+   **/
+   public Module loadModule(CharSequence name); 
   
   /** 
     * Given the name of a module, retrieves a map of stored settings or an empty map if no settings are saved.
@@ -30,7 +45,7 @@ public interface Executor {
   public Map<String, byte[]> moduleSettings(CharSequence moduleName);
   
   /**
-    * Given the name of a module and the name of a file, retrieves the contents of a stored file associated with it.
+    * Given the module and the name of a file, retrieves the contents of a stored file associated with it.
     * @param module The module associated with the file. 
     * @param fileName The name of the file to be retrieved.
     * @return An inputStream object representing the file.
