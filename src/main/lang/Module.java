@@ -53,6 +53,7 @@ public abstract class Module extends HashSet<Operation>{
   public boolean remove(Object o){
     return this.contains(o);
   }
+
   /**
     * Stores the given object into the settings map for long term storage.
     * Unless overriden, it stores the bytes from the results of the object's toString() function with UTF-8 encoding.
@@ -72,6 +73,7 @@ public abstract class Module extends HashSet<Operation>{
   public void storeProperty(CharSequence name, String obj){
     this.settings().put(name.toString(), obj.getBytes(DEFAULT_CHARSET));
   } 
+
   /**
     * A function for the retrieval of the modules settings to be store in long term storage. 
     * Storing value in bytes for the module to handle for itself. 
