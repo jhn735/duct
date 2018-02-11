@@ -2,6 +2,7 @@ package duct.main.lang;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.CharSequence;
+import java.lang.Character;
 import java.lang.StringBuilder;
 import java.io.IOException;
 import java.io.Reader;
@@ -55,7 +56,7 @@ public class Expression implements Evaluable{
     //assuming the basic stuff is out the way, get the name of the operation and then
     //get the operation.
     StringBuilder name = new StringBuilder();
-    while(!Character.isWhilespace(curChar)){
+    while(!Character.isWhitespace(curChar)){
       curChar = ParseUtils.readNextChar(pReader);
       charCount++;
       name.append(curChar); 

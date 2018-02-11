@@ -20,5 +20,5 @@ public abstract class Operation {
    * @param operands The list of values to be passed in as parameters.
    * @return A value which is the result of the operation.
   **/
- public Value execute(List<Value> operands);
+ abstract public Value execute(List<Value> operands);
 }
