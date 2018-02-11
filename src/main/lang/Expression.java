@@ -37,7 +37,7 @@ public class Expression implements Evaluable{
     return operation.execute(this.values());
   }
 
-  private static String EXPRESSION_NOT_ENCLOSED_MSG="An expression must be enclosed between '(' and ')'.";
+  private static final String EXPRESSION_NOT_ENCLOSED_MSG="An expression must be enclosed between '(' and ')'.";
 
   public static Expression nextExpression(Reader reader, Executor exe) 
     throws ParseException, IOException {
