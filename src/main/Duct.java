@@ -5,6 +5,7 @@ import duct.main.cli.DuctCLIArgument;
 import duct.main.cli.DuctCLIArgument.ArgDef;
 import duct.main.cli.CLIProcessor;
 import duct.main.lang.Value;
+import duct.main.lang.Module;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class Duct{
   public static void main(String[] args){
     Scanner s = new Scanner(System.in);
     String val = "";
+
     try{
       for(int i = 0; i<5; i++){
         val = s.nextLine();
