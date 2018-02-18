@@ -18,7 +18,7 @@ import java.io.Reader;
 import java.io.IOException;
 import java.io.StringReader;
 
-public class Value implements Evaluable{
+public class Value extends Element implements Evaluable{
 
   public static enum Type {
     TEXT(false), NUMBER(false), BOOL(false), MODULE(false), LIST(true), SCRIPT(true), SET(true); 
@@ -46,19 +46,19 @@ public class Value implements Evaluable{
   
   public final Type type;
   protected Object value;
-  public final String name;
 
   public Object getValue(){
     return this.value;
   }
 
   protected Value(){
+    super("");
     this.type = Type.TEXT;
-    this.name = "";
     this.value = null;
   }
 
   public Value(Type t, CharSequence name, CharSequence value) throws ParseException{
+    super(constructName(t, name, value));
     this.type = t;
 
     switch(t){
@@ -71,23 +71,30 @@ public class Value implements Evaluable{
       case SCRIPT: this.value = interpretScript(value); break;
       default:     throw new ParseException("Cannot interpret value with type given." , 0);
     }
-    
-    if(t == Type.MODULE && (name == null || name.toString().isEmpty()))
-      this.name = (String) this.value;
-    else 
-      this.name = (name == null)? "":name.toString();
   }
-  
+
   public Value(Value d){
+    super(d.name);
     this.type = d.type;
     this.value = d.getValue();
-    this.name = d.name;
   }
 
   public Value evaluate(){
     return this;
   }
 
+  public static String constructName(Type t, CharSequence name, CharSequence value){
+    String properName = (name == null)?"":name.toString();
+    try{ 
+      if(t == Type.MODULE && properName.isEmpty())
+        properName = interpretModule(value);
+    } catch (ValueInitException v){
+      return ""; 
+    }
+   
+  return properName;
+  } 
+  
   public String toString(){
     return value.toString();
   }
