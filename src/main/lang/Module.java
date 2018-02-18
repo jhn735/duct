@@ -18,22 +18,16 @@ import java.lang.UnsupportedOperationException;
  * A module can be considered an immutable set of operations so I'm making it a set
  * backed by a HashSet..
 **/
-public abstract class Module implements Set<Operation>{
+public abstract class Module extends Element implements Set<Operation>{
   private static final Charset DEFAULT_CHARSET = java.nio.charset.StandardCharsets.UTF_8;
-  //The name of the module which must be set when extending this class.
-  public final String name;
 
   public final Executor executor;
   protected Map<String, byte[]> settings;
 
   protected Set<Operation> operations;
 
-  /**
-    * Please note that the name must not be null otherwise this will be problem for your module.
-   **/
   public Module(CharSequence name, Collection<Operation> operations, Executor exe, Map<String, byte[]> settings){
-    this.name = name.toString();
-
+    super(name);
     //it's okay to not have initial settings. A module should be able to generate it's own defaults.
     if(settings != null)
       this.settings = new HashMap<String, byte[]>(settings); 
