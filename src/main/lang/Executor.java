@@ -51,4 +51,11 @@ public interface Executor {
     * @return An inputStream object representing the file.
    **/
    public InputStream moduleFile(Module module, CharSequence fileName);
+
+  /**
+    * Executes or evaluates the element with the given name.
+    * @param identifier The name or identifier of the element to execute.
+    * @return The element which is the result of the execution.
+   **/
+   public Element execute(CharSequence identifier);
 }
