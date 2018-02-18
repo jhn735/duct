@@ -17,7 +17,7 @@ import duct.main.lang.ParseUtils;
  * to run an expression without parsing the script again.
 **/
 //expressions must have one operation and a set of zero or more values on which the operation works on. 
-public class Expression implements Evaluable{
+public class Expression extends Element implements Evaluable{
   public final Operation operation;
   private List<Evaluable> evaluables;
  
@@ -30,6 +30,7 @@ public class Expression implements Evaluable{
   }
 
   public Expression(Operation op, List<Evaluable> evaluables){
+    super();
     this.operation = op;
     this.evaluables = evaluables;
   }

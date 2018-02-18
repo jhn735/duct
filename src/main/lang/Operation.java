@@ -6,12 +6,11 @@ import java.util.concurrent.Callable;
   * Values and tell it to execute, it does something and returns a value.
   * You also want to make sure it has a name.
  **/
-public abstract class Operation { 
- public final String name;
+public abstract class Operation extends Element{ 
  public final Module module;
 
  public Operation(CharSequence name, Module module){
-   this.name = name.toString();
+   super(name);
    this.module = module;
  }
 

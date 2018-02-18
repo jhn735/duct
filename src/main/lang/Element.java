@@ -11,4 +11,8 @@ public abstract class Element{
     this.name = name.toString();
   }
 
+  //A horse with no name.
+  public Element(){
+    this.name = "";
+  }
 }
