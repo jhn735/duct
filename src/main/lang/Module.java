@@ -107,13 +107,13 @@ public abstract class Module extends Element implements Set<Operation>{
     throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
     
   @Override
-  public int size(){ return operations.size(); }
+  public int size() { return operations.size(); }
 
   @Override 
-  public Object[] toArray(){ return operations.toArray(); }
+  public Object[] toArray() { return operations.toArray(); }
   
   @Override
-  public <T> T[] toArray(T[] a){ return operations.toArray(a); }
+  public <T> T[] toArray(T[] a) { return operations.toArray(a); }
 
   @Override
   public void clear() 

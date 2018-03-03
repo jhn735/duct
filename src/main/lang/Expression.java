@@ -20,7 +20,11 @@ import duct.main.lang.ParseUtils;
 public class Expression extends Element implements Evaluable{
   public final Operation operation;
   private List<Evaluable> evaluables;
- 
+
+  public List<Evaluable> evaluables(){
+    return new ArrayList<Evaluable>(evaluables);
+  }
+
   //create a list of values from the list evaluables given in the constructor
   public List<Value> values() {
     List<Value> values = new ArrayList<Value>();
@@ -29,19 +33,19 @@ public class Expression extends Element implements Evaluable{
   return values;
   }
 
-  public Expression(Operation op, List<Evaluable> evaluables){
+  public Expression( Operation op, List<Evaluable> evaluables ){ 
     super();
     this.operation = op;
     this.evaluables = evaluables;
-  }
+  } 
  
-  public Value evaluate(){
+  public Value evaluate() {
     return operation.execute(this.values());
   }
 
   private static final String EXPRESSION_NOT_ENCLOSED_MSG="An expression must be enclosed between '(' and ')'.";
 
-  public static Expression nextExpression(Reader reader, Executor exe) 
+  public static Expression nextExpression( Reader reader, Executor exe ) 
     throws ParseException, IOException {
     int charCount = 0;
     char curChar = ParseUtils.readNextChar(reader); 
