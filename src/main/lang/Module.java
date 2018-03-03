@@ -22,7 +22,7 @@ public abstract class Module extends Element implements Set<Operation>{
   private static final Charset DEFAULT_CHARSET = java.nio.charset.StandardCharsets.UTF_8;
 
   public final Executor executor;
-  protected Map<String, byte[]> settings;
+  private final Map<String, byte[]> settings;
 
   protected Set<Operation> operations;
 
@@ -43,36 +43,13 @@ public abstract class Module extends Element implements Set<Operation>{
   }
 
   /**
-    * Stores the given object into the settings map for long term storage.
-    * Unless overriden, it stores the bytes from the results of the object's toString() function with UTF-8 encoding.
-    * @param name The name of the property to store the value under.
-    * @param obj The object representing the value of the property.
+    * Get the setting value stored under the key.
+    * @param key 
+    * @return The value stored under the key in the settings map.
    **/
-  public void storeProperty(CharSequence name, Object obj){
-    this.storeProperty(name, obj.toString());
-  }  
-
-  /**
-    * Stores the given object into the settings map for long term storage.
-    * Unless overriden, it stores the bytes from the given string's UTF-8 encoding.
-    * @param name The name of the property to store the value under.
-    * @param obj The string representing the value of the property.
-   **/
-  public void storeProperty(CharSequence name, String obj){
-    this.settings().put(name.toString(), obj.getBytes(DEFAULT_CHARSET));
-  } 
-
-  /**
-    * A function for the retrieval of the modules settings to be store in long term storage. 
-    * Storing value in bytes for the module to handle for itself. 
-    * Encryption can be done on these values if need be, but the executor may encrypt it anyway.
-    * @return A map between the name of the property and the value to be stored in bytes.
-   **/ 
-  public Map<String, byte[]> settings(){
-    if(settings == null)
-      settings = new HashMap<String, byte[]>();
-  return settings;
-  }   
+  public byte[] getSetting( String key ){
+    return this.settings.get(key);
+  }
 
   @Override
   public boolean add(Operation e)
