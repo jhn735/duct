@@ -4,9 +4,9 @@ import java.util.Map;
 import java.io.InputStream;
 
 /**
- * Don't care how the executor does what it needs to do. Different 
- * implementations are more likely to need to be different.
- * I suspect that multiple iterations of the executor class will be written, hence this interface.
+ * An Executor for executing an element of a language and to act as a context type item for that element.
+ * Since the mechanisms for storing and retrieving context as well as for executing elements will vary from
+ * implementation to implementation, it is best to define this as an interface.
 **/
 public interface Executor {
   /** 
