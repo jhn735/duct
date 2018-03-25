@@ -1,8 +1,8 @@
 package duct.main.lang;
 
-import java.util.Set;
-import java.util.List;
 import java.lang.Runnable;
+import java.util.List;
+import java.util.Set;
 
 /**
   * An object to represent a script, interpreted and packaged to be run whenever.
@@ -24,4 +24,7 @@ public class Script extends Element implements Runnable{
       e.evaluate();
   }
   
+  public static Script nextScript(Reader reader, Executor exe){
+  return null;
+  }  
 }

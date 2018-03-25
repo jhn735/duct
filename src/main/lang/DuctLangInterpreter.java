@@ -1,6 +1,7 @@
 package duct.main.lang;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.lang.CharSequence;
 import java.lang.RuntimeException;
@@ -15,6 +16,8 @@ import java.util.Map;
 
 /**
   * Interpreter for the Duct language.
+  * Anything which goes wrong in the constructor, will cause a runtime exception to occur and likely kill the program. 
+  * I *want* this to happen. If something goes wrong here the rest of the program will not function properly and so needs to be fixed.
  **/
 public class DuctLangInterpreter implements Executor {
   private Map<String, Operation> operations;
@@ -50,6 +53,7 @@ public class DuctLangInterpreter implements Executor {
   public DuctLangInterpreter() {
     this( constructDefaultRootDirectory() );
   }
+
   /**
     * Given a list of URLs, creates the directories that they represent if they don't already exist.
     * @param directories The collection of URLs to create directories for.
@@ -141,10 +145,22 @@ public class DuctLangInterpreter implements Executor {
     * Loads the script with the given path and saves it under the given identifier.
     * @param identifier The identifier to load the script under.
     * @param pkg The package under which the script is stored.
-    * @return A Script object which represents the script that was retrieved.
+    * @return A Script object which represents the script that was retrieved or null if the script was not found.
    **/
-  public Script loadScript( CharSequence identifier, CharSequence pkg ){
-    return null;
+  public Script loadScript( CharSequence identifier, CharSequence pkg ) {
+    Script script = this.scripts.get(identifier.toString());
+    
+    if(script == null ){
+      try {
+        URL scriptURL   = new URL(this.scriptDirectory, pkg.toString()); 
+        File scriptFile = new File(scriptURL.toURI());
+        FileReader reader = new FileReader(scriptFile);
+        script = this.scripts.put(identifier.toString(), Script.nextScript(scriptFile, this));
+      } catch (Exception e){
+      }
+    }
+         
+    return script; 
   }
 
   /** 
