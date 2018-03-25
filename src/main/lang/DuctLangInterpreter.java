@@ -1,12 +1,17 @@
 package duct.main.lang;
 
-import java.util.Map;
-import java.lang.CharSequence;
-import java.io.InputStream;
-import java.net.URL;
-import java.lang.System;
 import java.io.File;
+import java.io.InputStream;
+import java.lang.CharSequence;
 import java.lang.RuntimeException;
+import java.lang.System;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Collection;
+import java.util.List; 
+import java.util.Map;
 
 /**
   * Interpreter for the Duct language.
@@ -29,33 +34,56 @@ public class DuctLangInterpreter implements Executor {
 
   public DuctLangInterpreter(URL root){
     this.rootDirectory = root;
-
-    this.settingsDirectory = new URL(this.rootDirectory, "settings");
-    this.scriptDirectory = new URL(this.rootDirectory, "scripts");
-    this.moduleDirectory = new URL(this.rootDirectory, "modules");
-    this.moduleSettingsDirectory = new URL(this.settingsDirectory, "module");
-   
-    List<URL> directories = List.of(this.settingsDirectory, this.scriptDirectory, this.moduleDirectory, this.moduleSettingsDirectory);
-    for( URL url: directories ){
-      File dir = new File(url.toURI());
-      dir.mkdirs();
-
-      if(!dir.isDirectory())
-        throw new RuntimeException("Resource at URL '" + dir.toString() + "' must be a directory and not a file.");
+    try{
+      this.settingsDirectory = new URL(this.rootDirectory, "settings");
+      this.scriptDirectory = new URL(this.rootDirectory, "scripts");
+      this.moduleDirectory = new URL(this.rootDirectory, "modules");
+      this.moduleSettingsDirectory = new URL(this.settingsDirectory, "module");
+    } catch (MalformedURLException mal){
+      throw new RuntimeException("Error in construction of supporting directory URLs for the interpreter. Fortune does not smile upon you.", mal);
     }
-   
+     
+    List<URL> directories = List.of(this.settingsDirectory, this.scriptDirectory, this.moduleDirectory, this.moduleSettingsDirectory);
+    createDirectories(directories);
   }
 
   public DuctLangInterpreter() {
     this( constructDefaultRootDirectory() );
   }
+  /**
+    * Given a list of URLs, creates the directories that they represent if they don't already exist.
+    * @param directories The collection of URLs to create directories for.
+   **/
+  private static void createDirectories(Collection<URL> directories) {
+    try {
+      for( URL url: directories ){
+        File dir = new File(url.toURI());
+        dir.mkdirs();
 
+        if(!dir.isDirectory())
+          throw new RuntimeException("Resource at URL '" + dir.toString() + "' must be a directory and not a file.");
+      }
+    } catch (URISyntaxException syn){
+     throw new RuntimeException("Error occurred while creating supporting directories for the interpreter. Something went wrong with the construction of the URLs.", syn);  
+    }
+  }
+
+  private static final String ROOT_DIR_CONST_ERR_MSG = 
+    "Error in constructing the default root directory URL of the interpreter. Check that the 'user.home' property in java is properly set.";
   private static URL constructDefaultRootDirectory() {
+    URL rootURL;
+
     String home = System.getProperty(HOME_PROPERTY);
     if(home == null)
       throw new RuntimeException("System property '" + HOME_PROPERTY + "' does not exist for some reason!"); 
-  
-  return new URL(home + "/.duct");
+
+    try {
+      rootURL = new URL(home + "/.duct");  
+    } catch(MalformedURLException mal){
+      throw new RuntimeException(ROOT_DIR_CONST_ERR_MSG, mal);
+    }
+
+  return rootURL;
   }
  
   /** 
