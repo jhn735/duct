@@ -12,7 +12,7 @@ public class Script extends Element implements Runnable{
   private final Set<Module> modules;
   private final List<Evaluable> instructions;
 
-  public Script(CharSequence name, List<Evaluable> instructions){ 
+  public Script(CharSequence name, List<Evaluable> instructions, Executor exe, Set<Module> modules){ 
     super(name);
     this.executor = exe;
     this.modules = modules;
@@ -21,7 +21,7 @@ public class Script extends Element implements Runnable{
 
   public void run(){
     for(Evaluable e:instructions)
-      e.Evaluate();
+      e.evaluate();
   }
   
 }

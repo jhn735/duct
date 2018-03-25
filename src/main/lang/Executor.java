@@ -42,8 +42,12 @@ public interface Executor {
     * @param identifier The identifier of the element.
     * @param element The element to save.
    **/
-  public void saveElement( CharSequence identifier, Element element );
-
+  default public void saveElement( CharSequence identifier, Element element ){
+    if(element instanceof Value)
+      saveElement( identifier, ((Value) element) );
+    else if( element instanceof Operation )
+      saveElement( identifier, ((Operation) element) );
+  }
   /**
     * Retrieves or loads the module which has the given identifier associated. 
     * That is it retrieves the module which has had the given alias assigned to it. 
