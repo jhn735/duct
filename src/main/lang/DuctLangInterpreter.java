@@ -154,8 +154,8 @@ public class DuctLangInterpreter implements Executor {
       try {
         URL scriptURL   = new URL(this.scriptDirectory, pkg.toString()); 
         File scriptFile = new File(scriptURL.toURI());
-        FileReader reader = new FileReader(scriptFile);
-        script = this.scripts.put(identifier.toString(), Script.nextScript(scriptFile, this));
+        FileReader scriptReader = new FileReader(scriptFile);
+        script = this.scripts.put(identifier.toString(), Script.nextScript(scriptReader, this));
       } catch (Exception e){
       }
     }

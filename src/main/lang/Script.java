@@ -1,5 +1,6 @@
 package duct.main.lang;
 
+import java.io.Reader;
 import java.lang.Runnable;
 import java.util.List;
 import java.util.Set;
