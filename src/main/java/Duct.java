@@ -62,11 +62,11 @@ public class Duct{
         break;
         } 
         case INTERACTIVE: {
-          config.put(ConfigProperty.START_REPL.name(), new Boolean(true));
+          config.put(ConfigProperty.START_REPL.name(), Boolean.TRUE);
         break;
         }
         default:{
-         config.put(ConfigProperty.DISP_HELP.name(), new Boolean(true)); 
+         config.put(ConfigProperty.DISP_HELP.name(), Boolean.TRUE); 
         }
       }
     } 
