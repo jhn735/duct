@@ -18,6 +18,10 @@ repositories {
 
 version='0.0.1'
 
+compileJava {
+	options.compilerArgs << '-Xlint:deprecation'
+}
+
 jar {
 	manifest {
 		attributes(
@@ -26,4 +30,8 @@ jar {
 			'BuildTime'             : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
 		)
 	}
+}
+
+test {
+	useJUnitPlatform()
 }
