@@ -149,7 +149,7 @@ public class Value extends Element implements Evaluable {
 	*/
 	public static List<Value> interpretList(CharSequence value) throws ValueInitException, ParseException{
 		List<Value> listValue = new ArrayList<Value>();
-		try{
+		try {
 			StringReader r = new StringReader(value.toString());
 			r.mark(0);
 			//while the reader isn't empty

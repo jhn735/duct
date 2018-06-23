@@ -20,61 +20,61 @@ import org.apache.commons.lang3.StringUtils;
  * disabled by user arguments. 
 */
 public class Duct{
-  public static enum ConfigProperty {
-    SCRIPT_PATH, START_REPL, DISP_HELP;
-  };
- 
-  protected Map<String, Object> config; 
- 
-  public static void main(String[] args){
-    Scanner s = new Scanner(System.in);
-    String val = "";
+	public static enum ConfigProperty {
+		SCRIPT_PATH, START_REPL, DISP_HELP;
+	};
 
-    try{
-      for(int i = 0; i<5; i++){
-        val = s.nextLine();
-        StringReader r = new StringReader(val);
-        Value d = Value.nextValue(r);
-        System.out.println(d.type.name()); 
-        System.out.println(d.name);
-      }
-    }catch(java.text.ParseException e){
-      System.out.println(e.getMessage());     
-      System.out.println(e.getErrorOffset());     
-      System.out.println(val);
-      System.out.println(StringUtils.repeat(' ', e.getErrorOffset()) + "^");
-    }catch(java.io.IOException i){
-      System.out.println(i.getMessage());
-    }
-    //if(a instanceof Double)
-    //  System.out.println("THis value is a not long!!!");
-    //System.out.println(a.getClass()); 
-    //System.out.println(a);
-  }
+	protected Map<String, Object> config;
 
-  public Duct(List<String> args){
-    config = new HashMap<String, Object>(); 
-    CLIProcessor proc = new CLIProcessor(args);
-    for(DuctCLIArgument arg:proc.arguments){
-      switch(arg.definition){
-        case FILE: {
-          config.put(ConfigProperty.SCRIPT_PATH.name(), arg.value);
-        break;
-        } 
-        case INTERACTIVE: {
-          config.put(ConfigProperty.START_REPL.name(), Boolean.TRUE);
-        break;
-        }
-        default:{
-         config.put(ConfigProperty.DISP_HELP.name(), Boolean.TRUE); 
-        }
-      }
-    } 
-  }
+	public static void main(String[] args){
+		Scanner s = new Scanner(System.in);
+		String val = "";
 
-  public void run(){
-    //if interactive flag is set, run the repl
-    
-  }
+		try {
+			for(int i = 0; i<5; i++) {
+				val = s.nextLine();
+				StringReader r = new StringReader(val);
+				Value d = Value.nextValue(r);
+				System.out.println(d.type.name());
+				System.out.println(d.name);
+			}
+		} catch(java.text.ParseException e) {
+			System.out.println(e.getMessage());
+			System.out.println(e.getErrorOffset());
+			System.out.println(val);
+			System.out.println(StringUtils.repeat(' ', e.getErrorOffset()) + "^");
+		} catch(java.io.IOException i) {
+			System.out.println(i.getMessage());
+		}
+		//if(a instanceof Double)
+		//	System.out.println("THis value is a not long!!!");
+		//System.out.println(a.getClass());
+		//System.out.println(a);
+	}
+
+	public Duct(List<String> args){
+		config = new HashMap<String, Object>();
+		CLIProcessor proc = new CLIProcessor(args);
+		for(DuctCLIArgument arg:proc.arguments){
+			switch(arg.definition){
+				case FILE: {
+					config.put(ConfigProperty.SCRIPT_PATH.name(), arg.value);
+				break;
+				}
+				case INTERACTIVE: {
+					config.put(ConfigProperty.START_REPL.name(), Boolean.TRUE);
+				break;
+				}
+				default:{
+				 config.put(ConfigProperty.DISP_HELP.name(), Boolean.TRUE);
+				}
+			}
+		}
+	}
+
+	public void run(){
+		//if interactive flag is set, run the repl
+
+	}
 
 }

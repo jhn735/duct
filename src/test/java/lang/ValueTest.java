@@ -27,7 +27,11 @@ public class ValueTest {
 	@ParameterizedTest(name = "{index} => parseText={0}, expectedType={1}, expectedValue={2}, negativeTest={3}")
 	@CsvSource({
 		"'<Text:hello world!!>', 'TEXT', 'hello world!!', false",
-		"'<Number:35>', 'NUMBER', '32', false"
+		"'<Number:35>',        'NUMBER',            '35', false",
+		"'<Number:hello>',     'NUMBER',            '21', true",
+		"'<Bool:true>',          'BOOL',          'true', false",
+		"'<Bool:hello>',         'BOOL',          'true', true",
+		"'<Bool:false>',         'BOOL',         'false', false"
 	})
 	void testValueParse( String parseText, String expectedType, String expectedValue, boolean negativeTest ) {
 		// do a positive test.
@@ -40,6 +44,8 @@ public class ValueTest {
 
 			if(!expectedValue.equalsIgnoreCase(val.toString()))
 				fail("Value '" + val.toString() + "' does not match the expected value '" + expectedValue + "'");
+			else if ( negativeTest )
+				fail("Value '" + val.toString() + "' matches the expected value but the test is supposed to be a negative test");
 		} catch(Exception e ) {
 			if(!negativeTest)
 				fail(e.getMessage());

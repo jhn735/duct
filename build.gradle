@@ -10,6 +10,7 @@ dependencies {
 	compile     group: 'commons-cli',        name: 'commons-cli',          version: '1.4'
 	// https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
 	testCompile group: 'org.junit.jupiter',  name: 'junit-jupiter-engine', version: '5.1.1'
+	testCompile group: 'org.junit.jupiter',  name: 'junit-jupiter-params', version: '5.1.1'
 }
 
 repositories {
@@ -27,7 +28,8 @@ jar {
 		attributes(
 			'Implementation-Title'  : project.name,
 			'Implementation-Version': project.version,
-			'BuildTime'             : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+			'BuildTime'             : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+			'Main-Class'            : 'duct.main.Duct'
 		)
 	}
 }
