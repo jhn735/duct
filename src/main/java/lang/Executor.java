@@ -11,7 +11,7 @@ import java.io.InputStream;
 public interface Executor {
   /** 
     * Retrieves the operation which has the given identifier.
-    * @param identifier The identifier of the operiation to retrieve.
+    * @param identifier The identifier of the operation to retrieve.
     * @return A operation object representing the operation to retrieve.
    **/
   public Operation getOperation( CharSequence identifier );
