@@ -11,7 +11,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
-import java.util.List; 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,6 +52,10 @@ public class DuctLangInterpreter implements Executor {
 
 	public DuctLangInterpreter() {
 		this( constructDefaultRootDirectory() );
+	}
+
+	public Value interpretStatement( CharSequence statementText) {
+		return null;
 	}
 
 private static final String UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG =
@@ -142,6 +146,16 @@ private static final String UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG =
 			return module;
 		
 	return module;
+	}
+
+	/**
+	  * Loads and executes the given script and package.
+	  * @param identifier The identifier to load the script under.
+	  * @param pkg The package under which the script is stored.
+	 **/
+	public void runScript( CharSequence identifier, CharSequence pkg ) {
+		Script scriptToRun = loadScript( identifier, pkg );
+		scriptToRun.run();
 	}
 
 	/**
