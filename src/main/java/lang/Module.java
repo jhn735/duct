@@ -27,19 +27,19 @@ public abstract class Module extends Element implements Set<Operation> {
 	protected Set<Operation> operations;
 
 	public Module(CharSequence name, Collection<Operation> operations, Executor exe, Map<String, byte[]> settings){
-	  super(name);
-	  //it's okay to not have initial settings. A module should be able to generate it's own defaults.
-	  if(settings != null)
-	    this.settings = new HashMap<String, byte[]>(settings); 
-	  else
-	    this.settings = new HashMap<String, byte[]>();
+		super(name);
+		//it's okay to not have initial settings. A module should be able to generate it's own defaults.
+		if(settings != null)
+			this.settings = new HashMap<String, byte[]>(settings); 
+		else
+			this.settings = new HashMap<String, byte[]>();
 
-	  this.executor = exe;
-	  this.operations = new HashSet<Operation>(operations);
+		this.executor = exe;
+		this.operations = new HashSet<Operation>(operations);
 	}
 
 	public Module(CharSequence name, Collection<Operation> operations, Executor exe){
-	  this(name, operations, exe, null); 
+		this(name, operations, exe, null); 
 	}
 
 	/**
@@ -48,18 +48,18 @@ public abstract class Module extends Element implements Set<Operation> {
 	  * @return The value stored under the key in the settings map.
 	 **/
 	public byte[] getSetting( String key ){
-	  return this.settings.get(key);
+		return this.settings.get(key);
 	}
 
 	public Operation displayHelp();
 
 	@Override
 	public boolean add(Operation e)
-	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
+		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
 	@Override
 	public boolean addAll(Collection<? extends Operation> e) 
-	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
+		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
 	@Override
 	public boolean contains(Object o){ return operations.contains(o); }
@@ -75,15 +75,15 @@ public abstract class Module extends Element implements Set<Operation> {
 
 	@Override
 	public boolean remove(Object o)
-	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
+		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
 	@Override
 	public boolean removeAll(Collection<?> c) 
-	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
+		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
 	@Override
 	public boolean retainAll(Collection<?> c) 
-	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
+		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
 	@Override
 	public int size() { return operations.size(); }
@@ -96,6 +96,6 @@ public abstract class Module extends Element implements Set<Operation> {
 
 	@Override
 	public void clear() 
-	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }  
+		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }  
 
 }
