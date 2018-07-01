@@ -19,83 +19,83 @@ import java.lang.UnsupportedOperationException;
  * backed by a HashSet..
 **/
 public abstract class Module extends Element implements Set<Operation> {
-  private static final Charset DEFAULT_CHARSET = java.nio.charset.StandardCharsets.UTF_8;
+	private static final Charset DEFAULT_CHARSET = java.nio.charset.StandardCharsets.UTF_8;
 
-  public final Executor executor;
-  private final Map<String, byte[]> settings;
+	public final Executor executor;
+	private final Map<String, byte[]> settings;
 
-  protected Set<Operation> operations;
+	protected Set<Operation> operations;
 
-  public Module(CharSequence name, Collection<Operation> operations, Executor exe, Map<String, byte[]> settings){
-    super(name);
-    //it's okay to not have initial settings. A module should be able to generate it's own defaults.
-    if(settings != null)
-      this.settings = new HashMap<String, byte[]>(settings); 
-    else
-      this.settings = new HashMap<String, byte[]>();
+	public Module(CharSequence name, Collection<Operation> operations, Executor exe, Map<String, byte[]> settings){
+	  super(name);
+	  //it's okay to not have initial settings. A module should be able to generate it's own defaults.
+	  if(settings != null)
+	    this.settings = new HashMap<String, byte[]>(settings); 
+	  else
+	    this.settings = new HashMap<String, byte[]>();
 
-    this.executor = exe;
-    this.operations = new HashSet<Operation>(operations);
-  }
+	  this.executor = exe;
+	  this.operations = new HashSet<Operation>(operations);
+	}
 
-  public Module(CharSequence name, Collection<Operation> operations, Executor exe){
-    this(name, operations, exe, null); 
-  }
+	public Module(CharSequence name, Collection<Operation> operations, Executor exe){
+	  this(name, operations, exe, null); 
+	}
 
-  /**
-    * Get the setting value stored under the key.
-    * @param key 
-    * @return The value stored under the key in the settings map.
-   **/
-  public byte[] getSetting( String key ){
-    return this.settings.get(key);
-  }
+	/**
+	  * Get the setting value stored under the key.
+	  * @param key 
+	  * @return The value stored under the key in the settings map.
+	 **/
+	public byte[] getSetting( String key ){
+	  return this.settings.get(key);
+	}
 
 	public Operation displayHelp();
 
-  @Override
-  public boolean add(Operation e)
-    throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
+	@Override
+	public boolean add(Operation e)
+	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
-  @Override
-  public boolean addAll(Collection<? extends Operation> e) 
-    throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
+	@Override
+	public boolean addAll(Collection<? extends Operation> e) 
+	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
-  @Override
-  public boolean contains(Object o){ return operations.contains(o); }
+	@Override
+	public boolean contains(Object o){ return operations.contains(o); }
 
-  @Override
-  public boolean containsAll(Collection<?> c){ return operations.containsAll(c); }
+	@Override
+	public boolean containsAll(Collection<?> c){ return operations.containsAll(c); }
 
-  @Override
-  public boolean isEmpty(){ return operations.isEmpty(); }
+	@Override
+	public boolean isEmpty(){ return operations.isEmpty(); }
 
-  @Override
-  public Iterator<Operation> iterator(){ return operations.iterator(); }
+	@Override
+	public Iterator<Operation> iterator(){ return operations.iterator(); }
 
-  @Override
-  public boolean remove(Object o)
-    throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
+	@Override
+	public boolean remove(Object o)
+	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
-  @Override
-  public boolean removeAll(Collection<?> c) 
-    throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
+	@Override
+	public boolean removeAll(Collection<?> c) 
+	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
-  @Override
-  public boolean retainAll(Collection<?> c) 
-    throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
+	@Override
+	public boolean retainAll(Collection<?> c) 
+	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
-  @Override
-  public int size() { return operations.size(); }
+	@Override
+	public int size() { return operations.size(); }
 
-  @Override 
-  public Object[] toArray() { return operations.toArray(); }
+	@Override 
+	public Object[] toArray() { return operations.toArray(); }
 
-  @Override
-  public <T> T[] toArray(T[] a) { return operations.toArray(a); }
+	@Override
+	public <T> T[] toArray(T[] a) { return operations.toArray(a); }
 
-  @Override
-  public void clear() 
-    throws UnsupportedOperationException { throw new UnsupportedOperationException(); }  
+	@Override
+	public void clear() 
+	  throws UnsupportedOperationException { throw new UnsupportedOperationException(); }  
 
 }
