@@ -9,6 +9,7 @@ import java.io.InputStream;
  * implementation to implementation, it is best to define this as an interface.
 **/
 public interface Executor {
+
 	/**
 	  * Retrieves the operation which has the given identifier.
 	  * @param identifier The identifier of the operation to retrieve.
@@ -43,14 +44,15 @@ public interface Executor {
 	  * @param element The element to save.
 	 **/
 	default public void saveElement( CharSequence identifier, Element element ){
-	  if(element instanceof Value)
-	    saveElement( identifier, ((Value) element) );
-	  else if( element instanceof Operation )
-	    saveElement( identifier, ((Operation) element) );
+		if(element instanceof Value)
+			saveElement( identifier, ((Value) element) );
+		else if( element instanceof Operation )
+			saveElement( identifier, ((Operation) element) );
 	}
+
 	/**
-	  * Retrieves or loads the module which has the given identifier associated. 
-	  * That is it retrieves the module which has had the given alias assigned to it. 
+	  * Retrieves or loads the module which has the given identifier associated.
+	  * That is it retrieves the module which has had the given alias assigned to it.
 	  * @param identifier The alias assigned to the requested module.
 	  * @return A module object representing the module that was associated with the identifier.
 	 **/
@@ -64,7 +66,7 @@ public interface Executor {
 	 **/
 	public Script loadScript( CharSequence identifier, CharSequence pkg );
 
-	/** 
+	/**
 	  * Given the name of a module, retrieves a map of stored settings or an empty map if no settings are saved.
 	  * @param moduleName The name of the module.
 	  * @return A map of settings to be used by the module in question. If no settings are saved an empty map is returned.
@@ -73,7 +75,7 @@ public interface Executor {
 	
 	/**
 	  * Given the module and the name of a file, retrieves the contents of a stored file associated with it.
-	  * @param module The module associated with the file. 
+	  * @param module The module associated with the file.
 	  * @param fileName The name of the file to be retrieved.
 	  * @return An inputStream object representing the file.
 	 **/
