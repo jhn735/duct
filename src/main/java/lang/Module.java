@@ -18,7 +18,7 @@ import java.lang.UnsupportedOperationException;
  * A module can be considered an immutable set of operations so I'm making it a set
  * backed by a HashSet..
 **/
-public abstract class Module extends Element implements Set<Operation>{
+public abstract class Module extends Element implements Set<Operation> {
   private static final Charset DEFAULT_CHARSET = java.nio.charset.StandardCharsets.UTF_8;
 
   public final Executor executor;
@@ -36,8 +36,8 @@ public abstract class Module extends Element implements Set<Operation>{
 
     this.executor = exe;
     this.operations = new HashSet<Operation>(operations);
-  } 
-  
+  }
+
   public Module(CharSequence name, Collection<Operation> operations, Executor exe){
     this(name, operations, exe, null); 
   }
@@ -51,17 +51,19 @@ public abstract class Module extends Element implements Set<Operation>{
     return this.settings.get(key);
   }
 
+	public Operation displayHelp();
+
   @Override
   public boolean add(Operation e)
     throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
- 
+
   @Override
   public boolean addAll(Collection<? extends Operation> e) 
     throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
-  @Override 
+  @Override
   public boolean contains(Object o){ return operations.contains(o); }
- 
+
   @Override
   public boolean containsAll(Collection<?> c){ return operations.containsAll(c); }
 
@@ -74,21 +76,21 @@ public abstract class Module extends Element implements Set<Operation>{
   @Override
   public boolean remove(Object o)
     throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
-  
+
   @Override
   public boolean removeAll(Collection<?> c) 
     throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
-    
+
   @Override
   public boolean retainAll(Collection<?> c) 
     throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
-    
+
   @Override
   public int size() { return operations.size(); }
 
   @Override 
   public Object[] toArray() { return operations.toArray(); }
-  
+
   @Override
   public <T> T[] toArray(T[] a) { return operations.toArray(a); }
 
