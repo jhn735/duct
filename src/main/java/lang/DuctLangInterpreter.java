@@ -33,20 +33,23 @@ public class DuctLangInterpreter implements Executor {
 	public final URL settingsDirectory;
 	public final URL scriptDirectory;
 	public final URL moduleDirectory;
+	public final URL logsDirectory;
 	public final URL moduleSettingsDirectory;
 
 	public DuctLangInterpreter(URL root){
 		this.rootDirectory = root;
 		try{
-			this.settingsDirectory = new URL(this.rootDirectory, "settings");
-			this.scriptDirectory = new URL(this.rootDirectory, "scripts");
-			this.moduleDirectory = new URL(this.rootDirectory, "modules");
-			this.moduleSettingsDirectory = new URL(this.settingsDirectory, "module");
+			this.settingsDirectory       = new URL(this.rootDirectory,     "settings");
+			this.scriptDirectory         = new URL(this.rootDirectory,     "scripts" );
+			this.moduleDirectory         = new URL(this.rootDirectory,     "modules" );
+			this.logsDirectory           = new URL(this.rootDirectory,     "logs"    );
+			this.moduleSettingsDirectory = new URL(this.settingsDirectory, "module"  );
+
 		} catch (MalformedURLException mal){
 			throw new RuntimeException("Error in construction of supporting directory URLs for the interpreter. Fortune does not smile upon you.", mal);
 		}
 
-		List<URL> directories = List.of(this.settingsDirectory, this.scriptDirectory, this.moduleDirectory, this.moduleSettingsDirectory);
+		List<URL> directories = List.of(this.settingsDirectory, this.scriptDirectory, this.moduleDirectory,  this.logsDirectory, this.moduleSettingsDirectory);
 		createDirectories(directories);
 	}
 
@@ -113,7 +116,7 @@ private static final String UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG =
 	 **/
 	public Value getValue( CharSequence identifier ){
 		return evaluables.get(identifier.toString()).evaluate();
-	}		
+	}
 
 	/**
 	  * Saves the operation with the given identifier.
@@ -123,7 +126,7 @@ private static final String UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG =
 	public void saveElement( CharSequence identifier, Operation operation ){
 		operations.put(identifier.toString(), operation);
 	}
-	
+
 	/**
 	  * Saves the value of the variable with the given identifier.
 	  * @param identifier The identifier of the variable to retrieve.
@@ -144,7 +147,7 @@ private static final String UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG =
 		Module module = modules.get(identifier.toString());
 		if(module != null)
 			return module;
-		
+
 	return module;
 	}
 
@@ -169,7 +172,7 @@ private static final String UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG =
 		
 		if(script == null ){
 			try {
-				URL scriptURL	 = new URL(this.scriptDirectory, pkg.toString()); 
+				URL scriptURL   = new URL(this.scriptDirectory, pkg.toString());
 				File scriptFile = new File(scriptURL.toURI());
 				FileReader scriptReader = new FileReader(scriptFile);
 				script = this.scripts.put(identifier.toString(), Script.nextScript(scriptReader, this));
@@ -188,7 +191,7 @@ private static final String UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG =
 	public Map<String, byte[]> moduleSettings( CharSequence moduleName ){
 		return null;
 	}
-	
+
 	/**
 	  * Given the module and the name of a file, retrieves the contents of a stored file associated with it.
 	  * @param module The module associated with the file. 
@@ -208,4 +211,11 @@ private static final String UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG =
 		return null;
 	}
 
+	/**
+	  * Displays the string value of the Duct Value to wherever the text output of this interpreter has been directed to..
+	  * @param val The value to display.
+	 **/
+	public void displayValue( Value val ) {
+
+	}
 }

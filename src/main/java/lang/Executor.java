@@ -11,6 +11,12 @@ import java.io.InputStream;
 public interface Executor {
 
 	/**
+	  * Displays the Duct Value as a string. Where it is displayed must be decided by the implementing class.
+	  * @param val The value to display.
+	 **/
+	public void displayValue( Value val );
+
+	/**
 	  * Retrieves the operation which has the given identifier.
 	  * @param identifier The identifier of the operation to retrieve.
 	  * @return A operation object representing the operation to retrieve.
