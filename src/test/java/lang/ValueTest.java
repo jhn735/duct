@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValueTest {
 
-
 	@DisplayName("Should calculate the correct sum")
 	@ParameterizedTest(name = "{index} => parseText={0}, expectedType={1}, expectedValue={2}, negativeTest={3}")
 	@CsvSource({
@@ -31,7 +30,8 @@ public class ValueTest {
 		"'<Number:hello>',     'NUMBER',            '21', true",
 		"'<Bool:true>',          'BOOL',          'true', false",
 		"'<Bool:hello>',         'BOOL',          'true', true",
-		"'<Bool:false>',         'BOOL',         'false', false"
+		"'<Bool:false>',         'BOOL',         'false', false",
+		"'<List:<Bool:true><Text:hello World!!><Number:3.14>>, 'LIST',   '[true, hello World!!, 3.14]', 'false'"
 	})
 	void testValueParse( String parseText, String expectedType, String expectedValue, boolean negativeTest ) {
 		// do a positive test.
