@@ -15,6 +15,7 @@ import java.lang.Number;
 import java.util.Scanner;
 import java.io.StringReader;
 import org.apache.commons.lang3.StringUtils;
+
 /**
  * This class loads everything that needs loading and brings up a repl when not
  * disabled by user arguments. 
@@ -37,6 +38,7 @@ public class Duct{
 				Value d = Value.nextValue(r);
 				System.out.println(d.type.name());
 				System.out.println(d.name);
+				System.out.println(d.toString());
 			}
 		} catch(java.text.ParseException e) {
 			System.out.println(e.getMessage());
@@ -46,10 +48,6 @@ public class Duct{
 		} catch(java.io.IOException i) {
 			System.out.println(i.getMessage());
 		}
-		//if(a instanceof Double)
-		//	System.out.println("THis value is a not long!!!");
-		//System.out.println(a.getClass());
-		//System.out.println(a);
 	}
 
 	public Duct(List<String> args){
