@@ -1,15 +1,20 @@
-package duct.main.lang;
+package duct.main.lang.interpreter;
+
+import duct.main.lang.*;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
+
 import java.lang.CharSequence;
 import java.lang.RuntimeException;
 import java.lang.System;
+
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
