@@ -1,4 +1,5 @@
 package duct.main.lang;
+
 import java.lang.CharSequence;
 import java.util.Map;
 import java.io.InputStream;

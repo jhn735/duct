@@ -51,7 +51,7 @@ public abstract class Module extends Element implements Set<Operation> {
 		return this.settings.get(key);
 	}
 
-	public Operation displayHelp();
+	public abstract Operation displayHelp();
 
 	@Override
 	public boolean add(Operation e)
