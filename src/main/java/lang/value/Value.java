@@ -1,43 +1,26 @@
 package duct.main.lang;
+
+import java.io.Reader;
+import java.io.IOException;
+import java.io.StringReader;
+
+import java.lang.Character;
+import java.lang.CharSequence;
+import java.lang.Double;
 import java.lang.Long;
+import java.lang.Number;
+import java.lang.StringBuilder;
+
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.lang.Long;
-import java.lang.Double;
-import java.lang.CharSequence;
-import org.apache.commons.lang3.StringUtils;
-import java.lang.Number;
-import java.lang.StringBuilder;
+
 import java.text.ParseException;
-import java.lang.Character;
-import duct.main.lang.ParseUtils;
-import java.io.Reader;
-import java.io.IOException;
-import java.io.StringReader;
+import org.apache.commons.lang3.StringUtils;
 
 public class Value extends Element implements Evaluable {
-
-	public static enum Type {
-		TEXT(false), NUMBER(false), BOOL(false), MODULE(false), LIST(true), SCRIPT(true), SET(true);
-		public final boolean isContainer;
-		private Type(boolean isCont){
-			this.isContainer = isCont;
-		}
-		public static Type parseType(CharSequence extractedType) throws ParseException{
-			for(Type t:Type.values()){
-				String name = t.name();
-				//instead of specifying the whole name of the type, one can specify the first letter of the type name 
-				if( StringUtils.equalsIgnoreCase(name, extractedType) ||
-						(extractedType.length() == 1 && StringUtils.startsWithIgnoreCase(name, extractedType) ))
-					return t;
-			 }
-		 //if no type was found despite the presence of the ':' then error out. 
-		 throw new ParseException("Type specifier '" + extractedType + "' is not valid.", 0);
-		}
-	}
 
 	public static class ValueInitException extends ParseException{
 		public static final String BASE_MSG = "Error occurred while initalizing value: ";
@@ -133,7 +116,7 @@ public class Value extends Element implements Evaluable {
 	public static Boolean interpretBool(CharSequence value) throws ValueInitException {
 		value = StringUtils.trimToEmpty(value.toString()).toLowerCase();
 		if(!boolStringValues.contains(value))
-			throw new ValueInitException("Value given '"+value+"' is not a boolean value.", 0);
+			throw new ValueInitException("Value given '" + value + "' is not a boolean value.", 0);
 
 	return Boolean.parseBoolean(value.toString());
 	}
