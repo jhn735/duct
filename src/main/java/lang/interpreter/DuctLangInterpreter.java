@@ -1,6 +1,7 @@
 package duct.main.lang.interpreter;
 
 import duct.main.lang.*;
+import duct.main.lang.Module;
 
 import java.io.File;
 import java.io.FileReader;
