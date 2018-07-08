@@ -6,10 +6,15 @@ import duct.main.cli.DuctCLIArgument.ArgDef;
 import duct.main.cli.CLIProcessor;
 import duct.main.lang.Value;
 import duct.main.lang.Module;
+import duct.main.lang.interpreter.InterpreterAgent;
+import duct.main.lang.interpreter.ProgramOutput;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.lang.Long;
 import java.lang.Number;
 import java.util.Scanner;
@@ -31,14 +36,16 @@ public class Duct{
 		Scanner s = new Scanner(System.in);
 		String val = "";
 
+
 		try {
+			URL rootURL = new URL("/home/jvilla/.duct/logs");
+
+			ProgramOutput po = new ProgramOutput(rootURL);
 			for(int i = 0; i<5; i++) {
 				val = s.nextLine();
 				StringReader r = new StringReader(val);
 				Value d = Value.nextValue(r);
-				System.out.println(d.type.name());
-				System.out.println(d.name);
-				System.out.println(d.toString());
+				po.handle(d);
 			}
 		} catch(java.text.ParseException e) {
 			System.out.println(e.getMessage());

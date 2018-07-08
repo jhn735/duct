@@ -39,7 +39,7 @@ public class DuctLangInterpreter implements Executor {
 	public final URL settingsDirectory;
 	public final URL scriptDirectory;
 	public final URL moduleDirectory;
-	public final URL logsDirectory;
+	public final InterpreterAgent outputAgent;
 	public final URL moduleSettingsDirectory;
 
 	public DuctLangInterpreter(URL root){
@@ -48,15 +48,12 @@ public class DuctLangInterpreter implements Executor {
 			this.settingsDirectory       = new URL(this.rootDirectory,     "settings");
 			this.scriptDirectory         = new URL(this.rootDirectory,     "scripts" );
 			this.moduleDirectory         = new URL(this.rootDirectory,     "modules" );
-			this.logsDirectory           = new URL(this.rootDirectory,     "logs"    );
+			this.outputAgent             = new ProgramOutput( new URL(this.rootDirectory,     "logs"    ) );
 			this.moduleSettingsDirectory = new URL(this.settingsDirectory, "module"  );
 
 		} catch (MalformedURLException mal){
 			throw new RuntimeException("Error in construction of supporting directory URLs for the interpreter. Fortune does not smile upon you.", mal);
 		}
-
-		List<URL> directories = List.of(this.settingsDirectory, this.scriptDirectory, this.moduleDirectory,  this.logsDirectory, this.moduleSettingsDirectory);
-		createDirectories(directories);
 	}
 
 	public DuctLangInterpreter() {
@@ -65,27 +62,6 @@ public class DuctLangInterpreter implements Executor {
 
 	public Value interpretStatement( CharSequence statementText) {
 		return null;
-	}
-
-private static final String UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG =
-		"Error occurred while creating supporting directories for the interpreter. Something went wrong with the construction of the URLs.";
-
-	/**
-	  * Given a list of URLs, creates the directories that they represent if they don't already exist.
-	  * @param directories The collection of URLs to create directories for.
-	 **/
-	private static void createDirectories(Collection<URL> directories) {
-		try {
-			for( URL url: directories ){
-				File dir = new File(url.toURI());
-				dir.mkdirs();
-
-				if(!dir.isDirectory())
-					throw new RuntimeException("Resource at URL '" + dir.toString() + "' must be a directory and not a file.");
-			}
-		} catch (URISyntaxException syn){
-		 throw new RuntimeException( UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG, syn);	
-		}
 	}
 
 	private static final String ROOT_DIR_CONST_ERR_MSG =
