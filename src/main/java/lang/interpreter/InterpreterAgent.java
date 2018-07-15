@@ -1,11 +1,12 @@
 package duct.main.lang.interpreter;
 
 import java.lang.UnsupportedOperationException;
+import java.lang.AutoCloseable;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public abstract class InterpreterAgent {
+public abstract class InterpreterAgent implements AutoCloseable {
 
 	public final URL jurisdictionDir;
 	public final String name;
@@ -41,4 +42,11 @@ public abstract class InterpreterAgent {
 		throw new UnsupportedOperationException( "This functionality has not been extended to handle this type of input." );
 	}
 
+	/**
+		* An agent may have to handle external resources and may have tie up loose ends before a graceful shutdown.
+	 **/
+	@Override
+	public void close() throws Exception {
+		//do nothing for now.
+	}
 }

@@ -36,24 +36,30 @@ public class Duct{
 		Scanner s = new Scanner(System.in);
 		String val = "";
 
+		ProgramOutput po;
 
 		try {
-			URL rootURL = new URL("/home/jvilla/.duct/logs");
+			URL rootURL = new URL("file:/home/jvilla/.duct/logs");
 
-			ProgramOutput po = new ProgramOutput(rootURL);
-			for(int i = 0; i<5; i++) {
+			po = new ProgramOutput(rootURL);
+			for(int i = 0; i<2; i++) {
 				val = s.nextLine();
 				StringReader r = new StringReader(val);
 				Value d = Value.nextValue(r);
 				po.handle(d);
 			}
+			po.close();
 		} catch(java.text.ParseException e) {
 			System.out.println(e.getMessage());
 			System.out.println(e.getErrorOffset());
 			System.out.println(val);
 			System.out.println(StringUtils.repeat(' ', e.getErrorOffset()) + "^");
+			e.printStackTrace(System.out);
 		} catch(java.io.IOException i) {
 			System.out.println(i.getMessage());
+			i.printStackTrace(System.out);
+		} catch(Exception e ){
+			e.printStackTrace(System.out);
 		}
 	}
 

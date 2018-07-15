@@ -48,9 +48,8 @@ public class DuctLangInterpreter implements Executor {
 			this.settingsDirectory       = new URL(this.rootDirectory,     "settings");
 			this.scriptDirectory         = new URL(this.rootDirectory,     "scripts" );
 			this.moduleDirectory         = new URL(this.rootDirectory,     "modules" );
-			this.outputAgent             = new ProgramOutput( new URL(this.rootDirectory,     "logs"    ) );
+			this.outputAgent             = new ProgramOutput( new URL(this.rootDirectory,     "logs/"    ) );
 			this.moduleSettingsDirectory = new URL(this.settingsDirectory, "module"  );
-
 		} catch (MalformedURLException mal){
 			throw new RuntimeException("Error in construction of supporting directory URLs for the interpreter. Fortune does not smile upon you.", mal);
 		}
