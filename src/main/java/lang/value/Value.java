@@ -133,14 +133,14 @@ public class Value extends Element implements Evaluable {
 	public static List<Value> interpretList(CharSequence value) throws ValueInitException, ParseException{
 		List<Value> listValue = new ArrayList<Value>();
 		try {
-			StringReader r = new StringReader(value.toString());
-			r.mark(0);
+			StringReader r = new StringReader( value.toString().trim() );
+			r.mark(1);
 			//while the reader isn't empty
 			while(r.read() >= 0 ){
 				r.reset();
 
-				listValue.add(nextValue(r));			
-				r.mark(0);
+				listValue.add(nextValue(r));
+				r.mark(1);
 			}
 		} catch(IOException i){
 			throw new ParseException( SRC_READ_ERROR_MSG, 0);
@@ -174,8 +174,13 @@ public class Value extends Element implements Evaluable {
 		StringBuilder extractedValue = new StringBuilder();
 		//make sure to get number of charecters read, in case a parse exception is thrown.
 		int charCount = 0;
-		char curChar = ParseUtils.readNextChar(reader);
-		charCount++;
+		char curChar;
+
+		do {
+			curChar = ParseUtils.readNextChar(reader);
+			charCount++;
+		} while(Character.isWhitespace(curChar) );
+
 		//throw a fit if the value is not started properly
 		if(curChar != '<')
 			throw new ParseException(VALUE_NOT_ENCLOSED_MSG, charCount);
@@ -190,8 +195,8 @@ public class Value extends Element implements Evaluable {
 		do{
 			curChar = ParseUtils.readNextChar(reader);
 			charCount++;
-			//the reason I have each case adding the current character to the extracted value rather than having that code after the switch statement is to simplify 
-			//the control flow. No need to make assumptions about what should occur outside of the code within that case statement. Each is responsible to wrap things up. 
+			//the reason I have each case adding the current character to the extracted value rather than having that code after the switch statement is to simplify
+			//the control flow. No need to make assumptions about what should occur outside of the code within that case statement. Each is responsible to wrap things up.
 			switch(curChar){
 				//this indicates that the value is named something. The name of the value can only be specified before the type is specified, hence the null check.
 				case '#':
@@ -257,12 +262,8 @@ public class Value extends Element implements Evaluable {
 
 		Value d = null;
 
-		try{
-			//Attempt to parse the value having parsed the type and extracted the name and the string value.	
-			d = new Value(type, name, extractedValue);
-		}catch(ParseException p) {
-			throw new ParseException(p.getMessage(), p.getErrorOffset() + valueStart);
-		}
+		//Attempt to parse the value having parsed the type and extracted the name and the string value.	
+		d = new Value(type, name, extractedValue);
 	return d;
 	}		
 	
