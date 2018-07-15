@@ -10,8 +10,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.time.ZonedDateTime;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -21,7 +22,7 @@ public class ProgramOutput extends InterpreterAgent {
 		FULL, LOGGER, BASIC;
 	}
 
-	protected Set<Appendable> outputOutlets;
+	protected Set<PrintStream> outputOutlets;
 	protected DisplayMode mode;
 
 	public ProgramOutput( URL jurisdictionURL ){
@@ -30,7 +31,7 @@ public class ProgramOutput extends InterpreterAgent {
 		this.mode          = DisplayMode.FULL;
 	}
 
-	public ProgramOutput( URL JurisdictionURL, DisplayMode mode, Set<Appendable> outputs ) {
+	public ProgramOutput( URL JurisdictionURL, DisplayMode mode, Set<PrintStream> outputs ) {
 		super( JurisdictionURL, "ProgramOutput" );
 		this.outputOutlets = outputs;
 		this.mode          = mode;
@@ -41,28 +42,29 @@ public class ProgramOutput extends InterpreterAgent {
 	}
 
 	private static final String OUTPUT_FIELD_SEPARATOR = ", ";
-	protected void printOutput( Collection<Appendable> outputs, String label,
+	protected void printOutput( Collection<PrintStream> outputs, String label,
 	 TemporalAccessor dateTime, duct.main.lang.Type t, String value ) throws IOException {
 
 		String date = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(dateTime);
 		String type = (t == null )? "null" : t.name();
 
-		for( Appendable output:outputs ) {
-			if( this.mode != DisplayMode.BASIC ){
-				appendText( output, label);
-				output.append( date  ).append( OUTPUT_FIELD_SEPARATOR );
-			}
-
-			if( this.mode == DisplayMode.FULL ){
-				appendText( output, type );
-			}
-
-			appendText( output, value);
-			output.append( System.lineSeparator() );
+		StringBuilder logLine = new StringBuilder();
+		if( this.mode != DisplayMode.BASIC ){
+			appendText( logLine, label);
+			logLine.append( date  ).append( OUTPUT_FIELD_SEPARATOR );
 		}
+
+		if( this.mode == DisplayMode.FULL ){
+			appendText( logLine, type );
+		}
+
+		appendText( logLine, value);
+
+		for(PrintStream output:outputs )
+			output.println(logLine.toString());
 	}
 
-	protected static Appendable appendText(Appendable a, String text ) throws IOException {
+	protected static Appendable appendText( Appendable a, String text ) throws IOException {
 		return a.append('"').append(text).append('"').append( OUTPUT_FIELD_SEPARATOR );
 	}
 
@@ -99,17 +101,17 @@ public class ProgramOutput extends InterpreterAgent {
 		}
 	}
 
-	private static Set<Appendable> constructDefaultOutputOutletSet( URL jurisdictionURL ) {
-		Set<Appendable> outputOutletSet = new HashSet<Appendable>();
+	private static Set<PrintStream> constructDefaultOutputOutletSet( URL jurisdictionURL ) {
+		Set<PrintStream> outputOutletSet = new HashSet<PrintStream>();
 		outputOutletSet.add( java.lang.System.out );
 
-		String logFileName = "duct.log." + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(ZonedDateTime.now());
+		String logFileName = "duct.log." + DateTimeFormatter.ISO_LOCAL_DATE.format(ZonedDateTime.now());
 		try {
 			File logFileDir = new File(jurisdictionURL.toURI());
 			File logFile    = new File(logFileDir, logFileName );
 			logFile.createNewFile();
 
-			outputOutletSet.add( new FileWriter(logFile) );
+			outputOutletSet.add( new PrintStream( new FileOutputStream(logFile, true), true) );
 		} catch (URISyntaxException syn){
 			throw new RuntimeException( "Unable to create log file.", syn);	
 		} catch (IOException io ) {
