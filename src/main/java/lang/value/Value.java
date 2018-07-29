@@ -10,6 +10,7 @@ import java.lang.Double;
 import java.lang.Long;
 import java.lang.Number;
 import java.lang.StringBuilder;
+import java.lang.Exception;
 
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class Value extends Element implements Evaluable {
 
 	public static String constructName(Type t, CharSequence name, CharSequence value){
 		String properName = (name == null)?"":name.toString();
-		try{ 
+		try{
 			if(t == Type.MODULE && properName.isEmpty())
 				properName = interpretModule(value);
 		} catch (ValueInitException v){
@@ -88,6 +89,18 @@ public class Value extends Element implements Evaluable {
 	
 	public static String interpretString(CharSequence value) {
 		return StringUtils.remove(value.toString(), '\\');
+	}
+
+	public static Value defaultValue( Type t ){
+		try {
+			switch(t){
+				case NUMBER: return new Value(t, "", "0");
+				case BOOL:   return new Value(t, "", "false");
+				default:     return new Value(t, "", "");
+			}
+		} catch( Exception e ) {
+			return null;
+		}
 	}
 
 	/**

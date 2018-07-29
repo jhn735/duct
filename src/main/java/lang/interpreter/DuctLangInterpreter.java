@@ -2,10 +2,12 @@ package duct.main.lang.interpreter;
 
 import duct.main.lang.*;
 import duct.main.lang.Module;
-
+import duct.main.lang.builtinModules.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.io.IOException;
 
 import java.lang.CharSequence;
 import java.lang.RuntimeException;
@@ -19,6 +21,9 @@ import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+
+import java.text.ParseException;
 
 /**
   * Interpreter for the Duct language.
@@ -39,7 +44,7 @@ public class DuctLangInterpreter implements Executor {
 	public final URL settingsDirectory;
 	public final URL scriptDirectory;
 	public final URL moduleDirectory;
-	public final InterpreterAgent outputAgent;
+	public final ProgramOutput outputAgent;
 	public final URL moduleSettingsDirectory;
 
 	public DuctLangInterpreter(URL root) {
@@ -53,6 +58,10 @@ public class DuctLangInterpreter implements Executor {
 		} catch (MalformedURLException mal){
 			throw new RuntimeException("Error in construction of supporting directory URLs for the interpreter. Fortune does not smile upon you.", mal);
 		}
+
+		//load the modules
+		this.modules = new HashMap<String, Module>();
+		loadBuiltInModules();
 	}
 
 	public DuctLangInterpreter() {
@@ -60,9 +69,14 @@ public class DuctLangInterpreter implements Executor {
 	}
 
 	public Value interpretStatement( CharSequence statementText) {
-		Expression exp = Expression.nextExpression( new StringReader(statementText.toString()), this);
-		Value expressionResult = exp.evaluate();
-		this.outputAgent.handle(expressionResult);
+		Value expressionResult = null;
+		try{
+			Expression exp = Expression.nextExpression( new StringReader(statementText.toString()), this);
+			expressionResult = exp.evaluate();
+			this.outputAgent.handle(expressionResult);
+		} catch ( ParseException p ){
+		} catch ( IOException io ) {}
+
 		return expressionResult;
 	}
 
@@ -85,7 +99,7 @@ public class DuctLangInterpreter implements Executor {
 	}
 
 	private void loadBuiltInModules(){
-		
+		this.modules.put("Logger", new ModuleLog( this ));
 	}
 	/**
 	  * Retrieves the operation which has the given identifier.
