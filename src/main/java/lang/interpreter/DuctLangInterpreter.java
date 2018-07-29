@@ -42,7 +42,7 @@ public class DuctLangInterpreter implements Executor {
 	public final InterpreterAgent outputAgent;
 	public final URL moduleSettingsDirectory;
 
-	public DuctLangInterpreter(URL root){
+	public DuctLangInterpreter(URL root) {
 		this.rootDirectory = root;
 		try{
 			this.settingsDirectory       = new URL(this.rootDirectory,     "settings");
@@ -60,7 +60,10 @@ public class DuctLangInterpreter implements Executor {
 	}
 
 	public Value interpretStatement( CharSequence statementText) {
-		return null;
+		Expression exp = Expression.nextExpression( new StringReader(statementText.toString()), this);
+		Value expressionResult = exp.evaluate();
+		this.outputAgent.handle(expressionResult);
+		return expressionResult;
 	}
 
 	private static final String ROOT_DIR_CONST_ERR_MSG =
@@ -81,6 +84,9 @@ public class DuctLangInterpreter implements Executor {
 	return rootURL;
 	}
 
+	private void loadBuiltInModules(){
+		
+	}
 	/**
 	  * Retrieves the operation which has the given identifier.
 	  * @param identifier The identifier of the operiation to retrieve.
@@ -196,7 +202,7 @@ public class DuctLangInterpreter implements Executor {
 	  * Displays the string value of the Duct Value to wherever the text output of this interpreter has been directed to..
 	  * @param val The value to display.
 	 **/
-	public void displayValue( Value val ) {
-
+	public void displayValue( Value val, CharSequence label ) {
+		this.outputAgent.handle( val, label.toString() );
 	}
 }

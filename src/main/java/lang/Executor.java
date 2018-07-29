@@ -15,7 +15,16 @@ public interface Executor {
 	  * Displays the Duct Value as a string. Where it is displayed must be decided by the implementing class.
 	  * @param val The value to display.
 	 **/
-	public void displayValue( Value val );
+	default public void displayValue( Value val ){
+		displayValue( val, "" );
+	}
+
+	/**
+	  * Displays the Duct Value as a string. Where it is displayed must be decided by the implementing class.
+	  * @param val The value to display.
+	  * @param label The label to be displayed along with the value.
+	 **/
+	public void displayValue( Value val, CharSequence label );
 
 	/**
 	  * Retrieves the operation which has the given identifier.
@@ -51,10 +60,11 @@ public interface Executor {
 	  * @param element The element to save.
 	 **/
 	default public void saveElement( CharSequence identifier, Element element ){
-		if(element instanceof Value)
+		if( element instanceof Value ){
 			saveElement( identifier, ((Value) element) );
-		else if( element instanceof Operation )
+		} else if( element instanceof Operation ){
 			saveElement( identifier, ((Operation) element) );
+		}
 	}
 
 	/**
