@@ -7,11 +7,11 @@ import java.util.concurrent.Callable;
   * Values and tell it to execute, it does something and returns a value.
   * You also want to make sure it has a name.
  **/
-public abstract class Operation extends Element{ 
+public abstract class Operation extends Element{
 	public final Module module;
 
-	public Operation(CharSequence name, Module module){
-		super(name);
+	public Operation( CharSequence name, Module module ){
+		super( name );
 		this.module = module;
 	}
 
@@ -20,7 +20,7 @@ public abstract class Operation extends Element{
 	 * @param operands The list of values to be passed in as parameters.
 	 * @return A value which is the result of the operation.
 	**/
-	public Value execute(List<Value> operands){
+	public Value execute( List<Value> operands ){
 		//We don't want the application to crash just because an operation failed.
 		if( operands == null )
 			operands = new ArrayList<Value>();
