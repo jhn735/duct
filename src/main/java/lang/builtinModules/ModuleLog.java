@@ -6,44 +6,50 @@ import duct.main.lang.Value;
 import duct.main.lang.Type;
 import java.util.List;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
   * Built in module which is responsible for logging messages at runtime.
   * For now the only operation supported is the help operation.
  **/
 public class ModuleLog extends Module {
-
 	public ModuleLog( Executor exe ){
-		super("Logger", null, exe, null);
+		super( "Logger", new HashSet<Operation>(), exe, null );
+		this.operations = constructOperations( this );
 	}
 
-	private abstract class LogMsg extends Operation {
-		public LogMsg( CharSequence name ){
-			super( name, ModuleLog.this );
+	protected abstract static class LogMsg extends Operation {
+		public LogMsg( CharSequence name, ModuleLog mod ){
+			super( name, mod );
 		}
 	}
 
-	private class Log extends LogMsg {
-		public Log(){
-			super("Log");
+	protected static class Log extends LogMsg {
+		public Log( ModuleLog mod ){
+			super( "Log", mod );
 		}
-		
+
 		public Value doOperation( List<Value> operands ){
+			List<Value> nOperands = new ArrayList<>( operands );
 			//this operation takes at least two values. Fill them in if there aren't enough.
-			while ( operands.size() < 2 ){
-				operands.add( Value.defaultValue(Type.TEXT) );
+			while ( nOperands.size() < 2 ){
+				nOperands.add( Value.defaultValue(Type.TEXT) );
 			}
 
-			module.executor.displayValue( operands.get(1), operands.get(0).toString() );
-		return operands.get(1);
+			module.executor.displayValue( nOperands.get(1), nOperands.get(0).toString() );
+		return nOperands.get( 1 );
 		}
 	}
+
 	@Override
 	public Operation displayHelp(){
 		return null;
 	}
 
-	private static Collection<Operation> constructOperations( Module m ){
-		return null;
+	private static Set<Operation> constructOperations( ModuleLog m ){
+		return new HashSet<Operation>( Arrays.asList( new Log( m ) ) );
 	}
 }

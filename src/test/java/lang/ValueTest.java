@@ -31,7 +31,7 @@ public class ValueTest {
 		"'<Bool:true>',          'BOOL',          'true', false",
 		"'<Bool:hello>',         'BOOL',          'true', true",
 		"'<Bool:false>',         'BOOL',         'false', false",
-		"'<List:<Bool:true><Text:hello World!!><Number:3.14>>, 'LIST',   '[true, hello World!!, 3.14]', 'false'"
+		"'<List:<Bool:true><Text:hello World!!><Number:3.14>>', 'LIST',   '[true, hello World!!, 3.14]', 'false'"
 	})
 	void testValueParse( String parseText, String expectedType, String expectedValue, boolean negativeTest ) {
 		// do a positive test.

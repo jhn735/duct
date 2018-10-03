@@ -14,7 +14,7 @@ import java.lang.UnsupportedOperationException;
 /**
  * Making the module an abstract and not an interface so that I can better control
  * how the application is extended. The executor is an interface because there is
- * less of a need control how it does things vs a Module.
+ * less of a need to control how it does things vs a Module.
  * A module can be considered an immutable set of operations so I'm making it a set
  * backed by a HashSet..
 **/
@@ -26,25 +26,25 @@ public abstract class Module extends Element implements Set<Operation> {
 
 	protected Set<Operation> operations;
 
-	public Module(CharSequence name, Collection<Operation> operations, Executor exe, Map<String, byte[]> settings){
+	public Module( CharSequence name, Collection<Operation> operations, Executor exe, Map<String, byte[]> settings ){
 		super(name);
 		//it's okay to not have initial settings. A module should be able to generate it's own defaults.
-		if(settings != null)
-			this.settings = new HashMap<String, byte[]>(settings); 
+		if( settings != null )
+			this.settings = new HashMap<String, byte[]>( settings );
 		else
 			this.settings = new HashMap<String, byte[]>();
 
 		this.executor = exe;
-		this.operations = new HashSet<Operation>(operations);
+		this.operations = new HashSet<Operation>( operations );
 	}
 
-	public Module(CharSequence name, Collection<Operation> operations, Executor exe){
-		this(name, operations, exe, null); 
+	public Module( CharSequence name, Collection<Operation> operations, Executor exe ){
+		this( name, operations, exe, null );
 	}
 
 	/**
 	  * Get the setting value stored under the key.
-	  * @param key 
+	  * @param key
 	  * @return The value stored under the key in the settings map.
 	 **/
 	public byte[] getSetting( String key ){
@@ -54,18 +54,18 @@ public abstract class Module extends Element implements Set<Operation> {
 	public abstract Operation displayHelp();
 
 	@Override
-	public boolean add(Operation e)
+	public boolean add( Operation e )
 		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
 	@Override
-	public boolean addAll(Collection<? extends Operation> e) 
+	public boolean addAll( Collection<? extends Operation> e )
 		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
 	@Override
-	public boolean contains(Object o){ return operations.contains(o); }
+	public boolean contains( Object o ){ return operations.contains(o); }
 
 	@Override
-	public boolean containsAll(Collection<?> c){ return operations.containsAll(c); }
+	public boolean containsAll( Collection<?> c ){ return operations.containsAll(c); }
 
 	@Override
 	public boolean isEmpty(){ return operations.isEmpty(); }
@@ -74,28 +74,28 @@ public abstract class Module extends Element implements Set<Operation> {
 	public Iterator<Operation> iterator(){ return operations.iterator(); }
 
 	@Override
-	public boolean remove(Object o)
+	public boolean remove( Object o )
 		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
 	@Override
-	public boolean removeAll(Collection<?> c) 
+	public boolean removeAll( Collection<?> c )
 		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
 	@Override
-	public boolean retainAll(Collection<?> c) 
+	public boolean retainAll( Collection<?> c )
 		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
 	@Override
-	public int size() { return operations.size(); }
-
-	@Override 
-	public Object[] toArray() { return operations.toArray(); }
+	public int size(){ return operations.size(); }
 
 	@Override
-	public <T> T[] toArray(T[] a) { return operations.toArray(a); }
+	public Object[] toArray(){ return operations.toArray(); }
 
 	@Override
-	public void clear() 
-		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }  
+	public <T> T[] toArray( T[] a ){ return operations.toArray(a); }
+
+	@Override
+	public void clear()
+		throws UnsupportedOperationException { throw new UnsupportedOperationException(); }
 
 }
