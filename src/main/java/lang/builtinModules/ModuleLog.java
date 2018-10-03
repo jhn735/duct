@@ -38,7 +38,6 @@ public class ModuleLog extends Module {
 				nOperands.add( Value.defaultValue(Type.TEXT) );
 			}
 
-			module.executor.displayValue( nOperands.get(1), nOperands.get(0).toString() );
 		return nOperands.get( 1 );
 		}
 	}

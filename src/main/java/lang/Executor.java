@@ -3,6 +3,7 @@ package duct.main.lang;
 import java.lang.CharSequence;
 import java.util.Map;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * An Executor for executing an element of a language and to act as a context type item for that element.
@@ -10,6 +11,13 @@ import java.io.InputStream;
  * implementation to implementation, it is best to define this as an interface.
 **/
 public interface Executor {
+
+	/**
+	  * Returns a URL which will be the file stomp grounds for a module or other items.
+	  * @param jurisdictionName The name of the folder under the main folder of the application.
+	  * @return A valid URL if the jurisdiction is available or null if it is not available.
+	 **/
+	public URL requestJurisdiction( CharSequence jurisdictionName );
 
 	/**
 	  * Displays the Duct Value as a string. Where it is displayed must be decided by the implementing class.
@@ -89,14 +97,6 @@ public interface Executor {
 	  * @return A map of settings to be used by the module in question. If no settings are saved an empty map is returned.
 	 **/
 	public Map<String, byte[]> moduleSettings( CharSequence moduleName );
-	
-	/**
-	  * Given the module and the name of a file, retrieves the contents of a stored file associated with it.
-	  * @param module The module associated with the file.
-	  * @param fileName The name of the file to be retrieved.
-	  * @return An inputStream object representing the file.
-	 **/
-	public InputStream moduleFile( Module module, CharSequence fileName );
 
 	/**
 	  * Executes or evaluates the element with the given name.

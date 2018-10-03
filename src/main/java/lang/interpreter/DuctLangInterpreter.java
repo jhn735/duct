@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import java.text.ParseException;
 
@@ -47,14 +49,14 @@ public class DuctLangInterpreter implements Executor {
 	public final ProgramOutput outputAgent;
 	public final URL moduleSettingsDirectory;
 
-	public DuctLangInterpreter(URL root) {
+	public DuctLangInterpreter( URL root ){
 		this.rootDirectory = root;
 		try{
-			this.settingsDirectory       = new URL(this.rootDirectory,     "settings");
-			this.scriptDirectory         = new URL(this.rootDirectory,     "scripts" );
-			this.moduleDirectory         = new URL(this.rootDirectory,     "modules" );
+			this.settingsDirectory       = new URL( this.rootDirectory,     "settings" );
+			this.scriptDirectory         = new URL( this.rootDirectory,     "scripts" );
+			this.moduleDirectory         = new URL( this.rootDirectory,     "modules" );
 			this.outputAgent             = new ProgramOutput( new URL(this.rootDirectory,     "logs/"    ) );
-			this.moduleSettingsDirectory = new URL(this.settingsDirectory, "module"  );
+			this.moduleSettingsDirectory = new URL( this.settingsDirectory, "module"  );
 		} catch (MalformedURLException mal){
 			throw new RuntimeException("Error in construction of supporting directory URLs for the interpreter. Fortune does not smile upon you.", mal);
 		}
@@ -101,6 +103,11 @@ public class DuctLangInterpreter implements Executor {
 	private void loadBuiltInModules(){
 		this.modules.put("Logger", new ModuleLog( this ));
 	}
+
+	public URL requestJurisdiction( CharSequence jurisdictionName ) {
+		return null;
+	}
+
 	/**
 	  * Retrieves the operation which has the given identifier.
 	  * @param identifier The identifier of the operiation to retrieve.
@@ -193,15 +200,6 @@ public class DuctLangInterpreter implements Executor {
 		return null;
 	}
 
-	/**
-	  * Given the module and the name of a file, retrieves the contents of a stored file associated with it.
-	  * @param module The module associated with the file. 
-	  * @param fileName The name of the file to be retrieved.
-	  * @return An inputStream object representing the file.
-	 **/
-	public InputStream moduleFile( Module module, CharSequence fileName ){
-		return null;
-	}
 
 	/**
 	  * Executes or evaluates the element with the given name.
