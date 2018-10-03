@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.lang.IllegalArgumentException;
 
 public class JurisdictionLeasingAgent extends InterpreterAgent {
 	private static final String JURISDICTION_AGENT_NAME = "JurisdictionLeaseAgent";
@@ -31,10 +33,15 @@ public class JurisdictionLeasingAgent extends InterpreterAgent {
 		try{
 			URL newURL = new URL( baseURL, jurisdictionName );
 			if( !this.leasedURLs.containsValue( newURL ) ){
+				InterpreterAgent.createDirectory( newURL );
 				this.leasedURLs.put( jurisdictionName, newURL );
 				return newURL;
 			}
 		} catch( MalformedURLException m ){
+			//log this error
+		} catch( URISyntaxException u ){
+			//log this error
+		} catch( IllegalArgumentException i ){
 			//log this error
 		}
 		return null;

@@ -47,10 +47,12 @@ public class DuctLangInterpreter implements Executor {
 	public final URL scriptDirectory;
 	public final URL moduleDirectory;
 	public final ProgramOutput outputAgent;
+	public final JurisdictionLeasingAgent jurisdictionLeasingAgent;
 	public final URL moduleSettingsDirectory;
 
 	public DuctLangInterpreter( URL root ){
 		this.rootDirectory = root;
+		this.jurisdictionLeasingAgent = new JurisdictionLeasingAgent( this.rootDirectory );
 		try{
 			this.settingsDirectory       = new URL( this.rootDirectory,     "settings" );
 			this.scriptDirectory         = new URL( this.rootDirectory,     "scripts" );

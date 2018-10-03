@@ -5,6 +5,7 @@ import java.lang.AutoCloseable;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.lang.IllegalArgumentException;
 
 public abstract class InterpreterAgent implements AutoCloseable {
 
@@ -12,7 +13,12 @@ public abstract class InterpreterAgent implements AutoCloseable {
 	public final String name;
 
 	public InterpreterAgent( URL jurisdictionDirectory, String agentName ){
-		createDirectory( jurisdictionDirectory, agentName );
+		try{
+			createDirectory( jurisdictionDirectory );
+		} catch( URISyntaxException syn ){
+			throw new RuntimeException( UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG + agentName + "." , syn );
+		}
+
 		this.name = agentName;
 		this.jurisdictionDir = jurisdictionDirectory;
 	}
@@ -20,17 +26,11 @@ public abstract class InterpreterAgent implements AutoCloseable {
 	private static final String UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG =
 		"Error occurred while creating supporting directories for the interpreter. Something went wrong with the construction of the URL for ";
 
-	protected static void createDirectory( URL url, String agentName ){
-		try {
-			File dir = new File( url.toURI() );
-			dir.mkdirs();
-
-			if( !dir.isDirectory() )
-				throw new RuntimeException( "Resource at URL '" + dir.toString() + "' must be a directory and not a file." );
-
-		} catch( URISyntaxException syn ){
-		 throw new RuntimeException( UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG + agentName + "." , syn );	
-		}
+	protected static void createDirectory( URL url ) throws URISyntaxException, IllegalArgumentException {
+		File dir = new File( url.toURI() );
+		dir.mkdirs();
+		if( !dir.isDirectory() )
+			throw new IllegalArgumentException( "Resource at URL '" + dir.toString() + "' must be a directory and not a file." );
 	}
 
 	/**
