@@ -43,25 +43,16 @@ public class DuctLangInterpreter implements Executor {
 	private static final String HOME_PROPERTY = "user.home";
 
 	public final URL rootDirectory;
-	public final URL settingsDirectory;
-	public final URL scriptDirectory;
-	public final URL moduleDirectory;
+
 	public final ProgramOutput outputAgent;
-	public final JurisdictionLeasingAgent jurisdictionLeasingAgent;
-	public final URL moduleSettingsDirectory;
+	public final JurisdictionLeasingAgent jurisLeasingAgent;
 
 	public DuctLangInterpreter( URL root ){
 		this.rootDirectory = root;
-		this.jurisdictionLeasingAgent = new JurisdictionLeasingAgent( this.rootDirectory );
-		try{
-			this.settingsDirectory       = new URL( this.rootDirectory,     "settings" );
-			this.scriptDirectory         = new URL( this.rootDirectory,     "scripts" );
-			this.moduleDirectory         = new URL( this.rootDirectory,     "modules" );
-			this.outputAgent             = new ProgramOutput( new URL(this.rootDirectory,     "logs/"    ) );
-			this.moduleSettingsDirectory = new URL( this.settingsDirectory, "module"  );
-		} catch (MalformedURLException mal){
-			throw new RuntimeException("Error in construction of supporting directory URLs for the interpreter. Fortune does not smile upon you.", mal);
-		}
+		this.jurisLeasingAgent = new JurisdictionLeasingAgent( this.rootDirectory );
+
+		URL programOutputURL = jurisLeasingAgent.lease( "logs" );
+		this.outputAgent     = new ProgramOutput( programOutputURL );
 
 		//load the modules
 		this.modules = new HashMap<String, Module>();
@@ -106,8 +97,17 @@ public class DuctLangInterpreter implements Executor {
 		this.modules.put( "Logger", new ModuleLog( this ) );
 	}
 
-	public URL requestJurisdictionURL( CharSequence jurisdictionName ){
-		return null;
+	public URL requestJurisdictionURL( String jurisdictionName ){
+		if( isValidJurisdictionName( jurisdictionName ) )
+			return null;
+		String expandedName = "moduleFiles/" + jurisdictionName.toString();
+		return this.jurisLeasingAgent.lease( expandedName );
+	}
+
+	private static boolean isValidJurisdictionName( String jurisdictionName ){
+		if( jurisdictionName != null )
+			return !(jurisdictionName.contains( "\\" ) || jurisdictionName.contains( "/" ));
+		return false;
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class DuctLangInterpreter implements Executor {
 	  * @param identifier The identifier to load the script under.
 	  * @param pkg The package under which the script is stored.
 	 **/
-	public void runScript( CharSequence identifier, CharSequence pkg ) {
+	public void runScript( CharSequence identifier, CharSequence pkg ){
 		Script scriptToRun = loadScript( identifier, pkg );
 		scriptToRun.run();
 	}
@@ -180,16 +180,17 @@ public class DuctLangInterpreter implements Executor {
 	public Script loadScript( CharSequence identifier, CharSequence pkg ) {
 		Script script = this.scripts.get(identifier.toString());
 		
-		if(script == null ){
+		/*if(script == null ){
 			try {
-				URL scriptURL   = new URL(this.scriptDirectory, pkg.toString());
-				File scriptFile = new File(scriptURL.toURI());
-				FileReader scriptReader = new FileReader(scriptFile);
-				script = this.scripts.put(identifier.toString(), Script.nextScript(scriptReader, this));
-			} catch (Exception e){
+				URL scriptURL   = new URL( this.scriptDirectory, pkg.toString() );
+				File scriptFile = new File( scriptURL.toURI() );
+				FileReader scriptReader = new FileReader( scriptFile );
+				script = this.scripts.put( identifier.toString(), Script.nextScript( scriptReader, this ) );
+			} catch ( Exception e ){
+				System.out.println( e );
 			}
 		}
-
+		*/
 		return script;
 	}
 
