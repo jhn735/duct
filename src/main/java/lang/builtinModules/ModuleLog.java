@@ -17,19 +17,18 @@ import java.util.Set;
  **/
 public class ModuleLog extends Module {
 	public ModuleLog( Executor exe ){
-		super( "Logger", new HashSet<Operation>(), exe, null );
-		this.operations = constructOperations( this );
+		super( "Logger", constructOperations(), exe, null );
 	}
 
 	protected abstract static class LogMsg extends Operation {
-		public LogMsg( CharSequence name, ModuleLog mod ){
-			super( name, mod );
+		public LogMsg( CharSequence name ){
+			super( name );
 		}
 	}
 
 	protected static class Log extends LogMsg {
-		public Log( ModuleLog mod ){
-			super( "Log", mod );
+		public Log(){
+			super( "Log" );
 		}
 
 		public Value doOperation( List<Value> operands ){
@@ -49,7 +48,7 @@ public class ModuleLog extends Module {
 		return null;
 	}
 
-	private static Set<Operation> constructOperations( ModuleLog m ){
-		return new HashSet<Operation>( Arrays.asList( new Log( m ) ) );
+	private static Set<Operation> constructOperations(){
+		return new HashSet<Operation>( Arrays.asList( new Log() ) );
 	}
 }
