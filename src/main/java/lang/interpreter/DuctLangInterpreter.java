@@ -84,16 +84,16 @@ public class DuctLangInterpreter implements Executor {
 
 	private static final String ROOT_DIR_CONST_ERR_MSG =
 		"Error in constructing the default root directory URL of the interpreter. Check that the 'user.home' property in java is properly set.";
-	private static URL constructDefaultRootDirectory() {
+	private static URL constructDefaultRootDirectory(){
 		URL rootURL;
 
-		String home = System.getProperty(HOME_PROPERTY);
-		if(home == null)
-			throw new RuntimeException("System property '" + HOME_PROPERTY + "' does not exist for some reason!"); 
+		String home = System.getProperty( HOME_PROPERTY );
+		if( home == null )
+			throw new RuntimeException( "System property '" + HOME_PROPERTY + "' does not exist for some reason!" );
 
 		try {
-			rootURL = new URL(home + "/.duct");	
-		} catch(MalformedURLException mal){
+			rootURL = new URL( home + "/.duct" );
+		} catch( MalformedURLException mal ){
 			throw new RuntimeException(ROOT_DIR_CONST_ERR_MSG, mal);
 		}
 
@@ -101,10 +101,10 @@ public class DuctLangInterpreter implements Executor {
 	}
 
 	private void loadBuiltInModules(){
-		this.modules.put("Logger", new ModuleLog( this ));
+		this.modules.put( "Logger", new ModuleLog( this ) );
 	}
 
-	public URL requestJurisdiction( CharSequence jurisdictionName ) {
+	public URL requestJurisdictionURL( CharSequence jurisdictionName ){
 		return null;
 	}
 

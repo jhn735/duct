@@ -11,7 +11,7 @@ public abstract class InterpreterAgent implements AutoCloseable {
 	public final URL jurisdictionDir;
 	public final String name;
 
-	public InterpreterAgent( URL jurisdictionDirectory, String agentName ) {
+	public InterpreterAgent( URL jurisdictionDirectory, String agentName ){
 		createDirectory( jurisdictionDirectory, agentName );
 		this.name = agentName;
 		this.jurisdictionDir = jurisdictionDirectory;
@@ -20,16 +20,16 @@ public abstract class InterpreterAgent implements AutoCloseable {
 	private static final String UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG =
 		"Error occurred while creating supporting directories for the interpreter. Something went wrong with the construction of the URL for ";
 
-	private static void createDirectory( URL url, String agentName ) {
+	protected static void createDirectory( URL url, String agentName ){
 		try {
-			File dir = new File(url.toURI());
+			File dir = new File( url.toURI() );
 			dir.mkdirs();
 
-			if(!dir.isDirectory())
-				throw new RuntimeException("Resource at URL '" + dir.toString() + "' must be a directory and not a file.");
+			if( !dir.isDirectory() )
+				throw new RuntimeException( "Resource at URL '" + dir.toString() + "' must be a directory and not a file." );
 
-		} catch (URISyntaxException syn){
-		 throw new RuntimeException( UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG + agentName + "." , syn);	
+		} catch( URISyntaxException syn ){
+		 throw new RuntimeException( UNABLE_TO_CREATE_SUPPORTING_DIR_ERR_MSG + agentName + "." , syn );	
 		}
 	}
 
@@ -38,7 +38,7 @@ public abstract class InterpreterAgent implements AutoCloseable {
 	  * @param o The input for this agent to handle.
 	  * @return An object representing the output as a result of this agent's action if any.
 	 **/
-	public Object handle( Object o ) {
+	public Object handle( Object o ){
 		throw new UnsupportedOperationException( "This functionality has not been extended to handle this type of input." );
 	}
 

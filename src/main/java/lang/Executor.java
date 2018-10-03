@@ -17,7 +17,7 @@ public interface Executor {
 	  * @param jurisdictionName The name of the folder under the main folder of the application.
 	  * @return A valid URL if the jurisdiction is available or null if it is not available.
 	 **/
-	public URL requestJurisdiction( CharSequence jurisdictionName );
+	public URL requestJurisdictionURL( CharSequence jurisdictionName );
 
 	/**
 	  * Displays the Duct Value as a string. Where it is displayed must be decided by the implementing class.
