@@ -17,18 +17,43 @@ import java.util.Set;
  **/
 public class ModuleLog extends Module {
 	public ModuleLog( Executor exe ){
-		super( "Logger", constructOperations(), exe, null );
+		super( "Logger", constructOperations( exe ), exe, null );
 	}
 
 	protected abstract static class LogMsg extends Operation {
-		public LogMsg( CharSequence name ){
+		protected static URL logsLocation = null;
+		protected final ReentrantLock Lock = new ReentrantLock( true );
+		protected static BufferedWriter logWriter = null;
+
+		private static final String LOG_LOCATION_ERR_MSG =
+			"Unable to initialize logs location. URL is either already reserved or the interpreter is unable to reserve the URL.";
+		public LogMsg( CharSequence name, Executor exe ){
 			super( name );
+
+			if( lock.tryLock( 1, TimeUnit.SECONDS ) ){
+				try{
+					if( logsLocation == null ){
+						logsLocation = exe.requestJurisdictionURL( "logs" );
+						//if the returned value is a null, something went wrong with the request or the url has already been taken.
+						if( logsLocation == null )
+							throw new IllegalStateException( LOG_LOCATION_ERR_MSG );
+
+						logWriter = new BufferedWriter( new FileWriter( createLogFile( "log", logsLocation ) ) );
+					}
+				} finally {
+					lock.unlock();
+				}
+			}
+		}
+
+		protected static File createLogFile( String label, URL FileURL ){
+			return null;
 		}
 	}
 
 	protected static class Log extends LogMsg {
-		public Log(){
-			super( "Log" );
+		public Log( Executor exe ){
+			super( "Log", exe );
 		}
 
 		public Value doOperation( List<Value> operands ){
@@ -47,7 +72,7 @@ public class ModuleLog extends Module {
 		return null;
 	}
 
-	private static Set<Operation> constructOperations(){
-		return new HashSet<Operation>( Arrays.asList( new Log() ) );
+	private static Set<Operation> constructOperations( Executor exe ){
+		return new HashSet<Operation>( Arrays.asList( new Log( exe ) ) );
 	}
 }

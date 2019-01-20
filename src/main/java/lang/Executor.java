@@ -13,7 +13,7 @@ import java.net.URL;
 public interface Executor {
 
 	/**
-	  * Returns a URL which will be the file stomp grounds for a module or other items.
+	  * Returns a URL which will be the file stomping grounds for a module or other items.
 	  * @param jurisdictionName The name of the folder under the main folder of the application.
 	  * @return A valid URL if the jurisdiction is available or null if it is not available.
 	 **/
