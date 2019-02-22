@@ -1,8 +1,9 @@
-package duct.main.lang;
+package duct.lang;
 
+import duct.lang.module.Module;
+import duct.lang.value.Value;
 import java.lang.CharSequence;
 import java.util.Map;
-import java.io.InputStream;
 import java.net.URL;
 
 /**
@@ -81,7 +82,7 @@ public interface Executor {
 	  * @param identifier The alias assigned to the requested module.
 	  * @return A module object representing the module that was associated with the identifier.
 	 **/
-	public Module loadModule( CharSequence identifier );
+	public Module loadModule(CharSequence identifier );
 
 	/**
 	  * Loads the script with the given path and saves it under the given identifier.

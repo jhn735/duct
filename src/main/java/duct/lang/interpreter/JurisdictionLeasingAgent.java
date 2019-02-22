@@ -1,4 +1,4 @@
-package duct.main.lang.interpreter;
+package duct.lang.interpreter;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class JurisdictionLeasingAgent extends InterpreterAgent {
 		try{
 			URL newURL = new URL( baseURL, jurisdictionName );
 			if( !this.leasedURLs.containsValue( newURL ) ){
-				InterpreterAgent.createDirectory( newURL );
+				createDirectory( newURL );
 				this.leasedURLs.put( jurisdictionName, newURL );
 				return newURL;
 			}

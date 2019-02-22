@@ -1,22 +1,14 @@
-package duct.main;
-import org.apache.commons.cli.*;
+package duct;
 import java.lang.System;
-import duct.main.cli.DuctCLIArgument;
-import duct.main.cli.DuctCLIArgument.ArgDef;
-import duct.main.cli.CLIProcessor;
-import duct.main.lang.Value;
-import duct.main.lang.Module;
-import duct.main.lang.interpreter.InterpreterAgent;
-import duct.main.lang.interpreter.ProgramOutput;
-import java.util.Arrays;
+import duct.cli.cli.DuctCLIArgument;
+import duct.cli.cli.CLIProcessor;
+import duct.lang.value.Value;
+import duct.lang.interpreter.ProgramOutput;
+
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.lang.Long;
-import java.lang.Number;
 import java.util.Scanner;
 import java.io.StringReader;
 import org.apache.commons.lang3.StringUtils;
@@ -27,8 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 */
 public class Duct{
 	public static enum ConfigProperty {
-		SCRIPT_PATH, START_REPL, DISP_HELP;
-	};
+		SCRIPT_PATH, START_REPL, DISP_HELP
+	}
 
 	protected Map<String, Object> config;
 

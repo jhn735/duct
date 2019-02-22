@@ -1,4 +1,7 @@
-package duct.main.lang.module;
+package duct.lang.module;
+import duct.lang.Executor;
+import duct.lang.Operation;
+
 import java.lang.CharSequence;
 import java.util.Map;
 import java.util.HashMap;
@@ -24,7 +27,7 @@ public abstract class Module extends OperationSet {
 	public  final Executor executor;
 	private final Map<String, byte[]> settings;
 
-	public Module( CharSequence name, Collection<Operation> operations, Executor exe, Map<String, byte[]> settings ){
+	public Module(CharSequence name, Collection<Operation> operations, Executor exe, Map<String, byte[]> settings ){
 		super( name, new HashSet<Operation>( operations ) );
 		//it's okay to not have initial settings. A module should be able to generate it's own defaults.
 		if( settings != null )

@@ -1,8 +1,8 @@
-package duct.main.lang.interpreter;
+package duct.lang.interpreter;
 
-import duct.main.lang.Value;
+import duct.lang.value.Type;
+import duct.lang.value.Value;
 import java.lang.Appendable;
-import java.lang.System;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Collection;
@@ -42,8 +42,8 @@ public class ProgramOutput extends InterpreterAgent {
 	}
 
 	private static final String OUTPUT_FIELD_SEPARATOR = ", ";
-	protected void printOutput( Collection<PrintStream> outputs, String label,
-	 TemporalAccessor dateTime, duct.main.lang.Type t, String value ) throws IOException {
+	protected void printOutput(Collection<PrintStream> outputs, String label,
+														 TemporalAccessor dateTime, Type t, String value ) throws IOException {
 
 		String date = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(dateTime);
 		String type = (t == null )? "null" : t.name();

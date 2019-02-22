@@ -1,4 +1,7 @@
-package duct.main.lang.module;
+package duct.lang.module;
+import duct.lang.Element;
+import duct.lang.Operation;
+
 import java.lang.CharSequence;
 import java.util.Map;
 import java.util.HashMap;
@@ -21,7 +24,7 @@ import java.lang.UnsupportedOperationException;
 public abstract class OperationSet extends Element implements Set<Operation> {
 	protected Set<Operation> operations;
 
-	public Module( CharSequence name, Collection<Operation> operations ){
+	public OperationSet( CharSequence name, Collection<Operation> operations ){
 		super(name);
 		this.operations = new HashSet<Operation>( operations );
 	}
@@ -94,5 +97,14 @@ public abstract class OperationSet extends Element implements Set<Operation> {
 	@Override
 	public void clear() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean equals( Object o ){
+		if( o.getClass().equals( this.getClass() ) ){
+			return this.name.equalsIgnoreCase( ((OperationSet)o).name );
+		}
+
+		return false;
 	}
 }

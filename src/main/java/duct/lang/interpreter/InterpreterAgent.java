@@ -1,4 +1,4 @@
-package duct.main.lang.interpreter;
+package duct.lang.interpreter;
 
 import java.lang.UnsupportedOperationException;
 import java.lang.AutoCloseable;

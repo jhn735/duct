@@ -1,16 +1,16 @@
-package duct.main.lang;
+package duct.lang;
 
-import duct.main.lang.ParseUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.lang.Character;
 import java.lang.Runnable;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import duct.lang.module.Module;
 import org.apache.commons.lang3.StringUtils;
 
 /**

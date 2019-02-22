@@ -1,14 +1,13 @@
-package duct.main.lang;
+package duct.lang;
 import java.util.List;
 import java.util.ArrayList;
-import java.lang.CharSequence;
 import java.lang.Character;
 import java.lang.StringBuilder;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.PushbackReader;
 import java.text.ParseException;
-import duct.main.lang.ParseUtils;
+import duct.lang.value.Value;
 
 /**
  * Represents a statement in the duct language which does something. That 
@@ -92,7 +91,8 @@ public class Expression extends Element implements Evaluable {
 						charCount++;
 						name.append( curChar );
 					}
-					evaluables.add( exe.getValue( name ) );
+					Evaluable valueToAdd = exe.getValue( name );
+					evaluables.add( valueToAdd );
 				break;
 				//Anything else should cause an error to be thrown.
 				default:

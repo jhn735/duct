@@ -1,6 +1,6 @@
-package duct.main.lang;
+package duct.lang;
 import java.util.concurrent.Callable;
-
+import duct.lang.value.Value;
 /* Each class that is evaluable has the responsibility of defining a way
  * for it to evaluate itself. Context at time of evaluation can only be guaranteed
  * if the implementing class requires it..

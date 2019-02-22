@@ -1,13 +1,12 @@
-package duct.test.lang;
+package duct.lang;
 
 import java.text.ParseException;
-import duct.main.lang.Value;
+import duct.lang.value.Value;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.CharSequence;
-import java.lang.System;
-import org.junit.jupiter.api.Test;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

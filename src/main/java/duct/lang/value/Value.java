@@ -1,4 +1,4 @@
-package duct.main.lang;
+package duct.lang.value;
 
 import java.io.Reader;
 import java.io.IOException;
@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.text.ParseException;
+
+import duct.lang.Element;
+import duct.lang.Evaluable;
+import duct.lang.ParseUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class Value extends Element implements Evaluable {

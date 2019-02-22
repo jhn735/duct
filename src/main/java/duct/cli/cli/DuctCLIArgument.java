@@ -1,4 +1,4 @@
-package duct.main.cli;
+package duct.cli.cli;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;

@@ -1,13 +1,12 @@
-package duct.main.cli;
+package duct.cli.cli;
 import java.lang.System;
-import org.apache.commons.lang3.StringUtils;
+
 import org.apache.commons.cli.*;
-import duct.main.cli.DuctCLIArgument.ArgDef;
+import duct.cli.cli.DuctCLIArgument.ArgDef;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 
 
 public class CLIProcessor {

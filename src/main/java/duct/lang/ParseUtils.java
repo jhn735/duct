@@ -1,4 +1,4 @@
-package duct.main.lang;
+package duct.lang;
 
 import java.io.Reader;
 import java.text.ParseException;

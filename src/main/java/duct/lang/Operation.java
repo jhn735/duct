@@ -1,4 +1,5 @@
-package duct.main.lang;
+package duct.lang;
+import duct.lang.value.Value;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;

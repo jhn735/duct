@@ -1,11 +1,9 @@
-package duct.main.lang.interpreter;
+package duct.lang.interpreter;
 
-import duct.main.lang.*;
-import duct.main.lang.Module;
-import duct.main.lang.builtinModules.*;
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStream;
+import duct.lang.*;
+import duct.lang.builtinModules.ModuleLog;
+import duct.lang.module.Module;
+import duct.lang.value.Value;
 import java.io.StringReader;
 import java.io.IOException;
 
@@ -14,16 +12,11 @@ import java.lang.RuntimeException;
 import java.lang.System;
 
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
 
 import java.text.ParseException;
 
