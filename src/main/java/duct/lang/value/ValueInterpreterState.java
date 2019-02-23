@@ -1,6 +1,7 @@
 package duct.lang.value;
 
 import duct.lang.ParseUtils;
+import duct.lang.value.type.Type;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -18,14 +19,14 @@ class ValueInterpreterState {
 	private Type      typeOfValue;
 	private String    nameOfValue;
 
-	public ValueInterpreterState( Reader r ){
+	ValueInterpreterState( Reader r ){
 		this.reader = r;
 
 		this.extractedValue   = new StringBuilder();
 		this.characterCount   = 0;
 		this.currentCharacter = null;
 		this.startOfValue     = -1;
-		this.enclosureDepth   = new Long( 0 );
+		this.enclosureDepth   =  0L;
 		this.typeOfValue      = null;
 		this.nameOfValue      = null;
 	}
@@ -35,70 +36,66 @@ class ValueInterpreterState {
 		this.characterCount   = 0;
 		this.currentCharacter = ' ';
 		this.startOfValue     = -1;
-		this.enclosureDepth   = new Long( 0 );
+		this.enclosureDepth   = 0L;
 		this.typeOfValue      = null;
 		this.nameOfValue      = null;
 	}
 
-	public long getEnclosureDepth(){
+	long getEnclosureDepth(){
 		return this.enclosureDepth;
 	}
 
-	public void increaseEnclosureDepth(){
+	void increaseEnclosureDepth(){
 		this.enclosureDepth++;
 	}
 
-	public void decreaseEnclosureDepth(){
+	void decreaseEnclosureDepth(){
 		if( this.enclosureDepth > 0 ){
 			this.enclosureDepth--;
 		}
 	}
 
-	public boolean isEnclosureDepthNonZero(){
+	boolean isEnclosureDepthNonZero(){
 		return this.enclosureDepth > 0;
 	}
 
-	public int getCharacterCount(){
+	int getCharacterCount(){
 		return this.characterCount;
 	}
 
-	public void increaseCharacterCount(){
-		this.characterCount++;
-	}
-
-	public int getStartOfValue(){
+	int getStartOfValue(){
 		return this.startOfValue;
 	}
 
-	public void setStartOfValue( int nStartOfValue ){
+	void setStartOfValue( int nStartOfValue ){
 		this.startOfValue = nStartOfValue;
 	}
 
-	public char getCurrentCharacter(){
+	char getCurrentCharacter(){
 		return this.currentCharacter;
 	}
 
-	public char readNextCharacterFromReader() throws IOException, ParseException {
+	char readNextCharacterFromReader() throws IOException, ParseException {
 		this.currentCharacter =
 				ParseUtils.readNextChar( this.reader, this.characterCount );
 		return this.currentCharacter;
 	}
 
-	public char readNextCharacterSkippingWhitespaceFromReader() throws IOException, ParseException {
+	char readNextCharacterSkippingWhitespaceFromReader() throws IOException, ParseException {
 		this.currentCharacter =
 				ParseUtils.readNextCharSkippingWhitespace( this.reader, this.characterCount );
 		return this.currentCharacter;
 	}
 
-	public Type getTypeOfValue(){
+	Type getTypeOfValue(){
 		return this.typeOfValue;
 	}
 
-	public void addCurrentCharacterToExtractedValue(){
+	void addCurrentCharacterToExtractedValue(){
 		this.extractedValue.append( this.currentCharacter );
 	}
 
-	public void resetExtractedValue(){
+	void resetExtractedValue(){
 		if( this.extractedValue == null ){
 			this.extractedValue = new StringBuilder();
 		} else {
@@ -106,23 +103,19 @@ class ValueInterpreterState {
 		}
 	}
 
-	public Type extractTypeFromExtractedValue() throws ParseException {
+	Type extractTypeFromExtractedValue() throws ParseException {
 		this.typeOfValue = Type.parseType( this.extractedValue );
 		this.resetExtractedValue();
 		return this.typeOfValue;
 	}
 
-	public String getNameOfValue(){
-		return this.nameOfValue;
-	}
-
-	public String extractNameFromExtractedValue(){
+	String extractNameFromExtractedValue(){
 		this.nameOfValue = this.extractedValue.toString();
 		this.resetExtractedValue();
 		return this.nameOfValue;
 	}
 
-	public Value toValue() throws ParseException {
+	Value toValue() throws ParseException {
 		return new Value( this.typeOfValue, this.nameOfValue, this.extractedValue );
 	}
 }

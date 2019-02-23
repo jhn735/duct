@@ -1,6 +1,6 @@
 package duct.lang.interpreter;
 
-import duct.lang.value.Type;
+import duct.lang.value.type.Type;
 import duct.lang.value.Value;
 import java.lang.Appendable;
 import java.util.Set;
@@ -18,12 +18,12 @@ import java.net.URL;
 
 public class ProgramOutput extends InterpreterAgent {
 
-	public static enum DisplayMode {
-		FULL, LOGGER, BASIC;
+	public enum DisplayMode {
+		FULL, LOGGER, BASIC
 	}
 
-	protected Set<PrintStream> outputOutlets;
-	protected DisplayMode mode;
+	private Set<PrintStream> outputOutlets;
+	private DisplayMode mode;
 
 	public ProgramOutput( URL jurisdictionURL ){
 		super( jurisdictionURL, "ProgramOutput" );
@@ -42,7 +42,7 @@ public class ProgramOutput extends InterpreterAgent {
 	}
 
 	private static final String OUTPUT_FIELD_SEPARATOR = ", ";
-	protected void printOutput(Collection<PrintStream> outputs, String label,
+	private void printOutput(Collection<PrintStream> outputs, String label,
 														 TemporalAccessor dateTime, Type t, String value ) throws IOException {
 
 		String date = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(dateTime);
@@ -64,7 +64,7 @@ public class ProgramOutput extends InterpreterAgent {
 			output.println(logLine.toString());
 	}
 
-	protected static Appendable appendText( Appendable a, String text ) throws IOException {
+	private static Appendable appendText( Appendable a, String text ) throws IOException {
 		return a.append('"').append(text).append('"').append( OUTPUT_FIELD_SEPARATOR );
 	}
 
@@ -73,22 +73,24 @@ public class ProgramOutput extends InterpreterAgent {
 		try {
 			printOutput( this.outputOutlets, "", ZonedDateTime.now(), null, o.toString() );
 		} catch ( IOException io) {
+			//handle exception
 		}
 	return null;
 	}
 
-	public Object handle( Value v ) {
+	Object handle( Value v ) {
 		return handle( v, "");
 	}
 
-	public Object handle( Value v, String label ) {
+	Object handle( Value v, String label ) {
 		return handle( v, label, ZonedDateTime.now() );
 	}
 
-	public Object handle( Value v, String label, TemporalAccessor datetime ) {
+	Object handle( Value v, String label, TemporalAccessor datetime ) {
 		try{
 			printOutput( this.outputOutlets, label, datetime, v.type, v.toString() );
 		} catch( IOException io ) {
+			//handle Exception
 		}
 	return null;
 	}
@@ -102,7 +104,7 @@ public class ProgramOutput extends InterpreterAgent {
 	}
 
 	private static Set<PrintStream> constructDefaultOutputOutletSet( URL jurisdictionURL ) {
-		Set<PrintStream> outputOutletSet = new HashSet<PrintStream>();
+		Set<PrintStream> outputOutletSet = new HashSet<>();
 		outputOutletSet.add( java.lang.System.out );
 
 		String logFileName = "duct.log." + DateTimeFormatter.ISO_LOCAL_DATE.format(ZonedDateTime.now());
@@ -112,10 +114,8 @@ public class ProgramOutput extends InterpreterAgent {
 			logFile.createNewFile();
 
 			outputOutletSet.add( new PrintStream( new FileOutputStream(logFile, true), true) );
-		} catch (URISyntaxException syn){
-			throw new RuntimeException( "Unable to create log file.", syn);	
-		} catch (IOException io ) {
-			throw new RuntimeException( "Unable to create log file.", io);
+		} catch (URISyntaxException| IOException e ){
+			throw new RuntimeException( "Unable to create log file.", e);
 		}
 	return outputOutletSet;
 	}

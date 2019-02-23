@@ -2,7 +2,7 @@ package duct.lang.builtinModules;
 import duct.lang.Executor;
 import duct.lang.Operation;
 import duct.lang.module.Module;
-import duct.lang.value.Type;
+import duct.lang.value.type.Type;
 import duct.lang.value.Value;
 
 import java.io.BufferedWriter;
@@ -27,14 +27,14 @@ public class ModuleLog extends Module {
 		super( "Logger", constructOperations( exe ), exe, null );
 	}
 
-	protected abstract static class LogMsg extends Operation {
-		protected static URL logsLocation = null;
-		protected final ReentrantLock lock = new ReentrantLock( true );
-		protected static BufferedWriter logWriter = null;
+	abstract static class LogMsg extends Operation {
+		static URL logsLocation = null;
+		final ReentrantLock lock = new ReentrantLock( true );
+		static BufferedWriter logWriter = null;
 
 		private static final String LOG_LOCATION_ERR_MSG =
 			"Unable to initialize logs location. URL is either already reserved or the interpreter is unable to reserve the URL.";
-		public LogMsg( CharSequence name, Executor exe ){
+		LogMsg( CharSequence name, Executor exe ){
 			super( name );
 
 			try {
@@ -52,20 +52,18 @@ public class ModuleLog extends Module {
 						lock.unlock();
 					}
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch( InterruptedException|IOException e ){
 				e.printStackTrace();
 			}
 		}
 
-		protected static File createLogFile(String label, URL FileURL ){
+		static File createLogFile(String label, URL FileURL ){
 			return null;
 		}
 	}
 
 	protected static class Log extends LogMsg {
-		public Log( Executor exe ){
+		Log( Executor exe ){
 			super( "Log", exe );
 		}
 
@@ -86,6 +84,6 @@ public class ModuleLog extends Module {
 	}
 
 	private static Set<Operation> constructOperations( Executor exe ){
-		return new HashSet<Operation>( Arrays.asList( new Log( exe ) ) );
+		return new HashSet<>( Arrays.asList( new Log( exe ) ) );
 	}
 }

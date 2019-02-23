@@ -7,6 +7,7 @@ import java.lang.Exception;
 import java.text.ParseException;
 import duct.lang.Element;
 import duct.lang.Evaluable;
+import duct.lang.value.type.Type;
 
 public class Value extends Element implements Evaluable {
 
