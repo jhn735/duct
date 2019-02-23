@@ -15,12 +15,14 @@ class ValueInterpreter {
 	private static final String VALUE_NOT_ENCLOSED_MSG         = "A value must open with '<' and close with '>'";
 	private static final String IDENTIFIER_ORDER_ERR_MSG       = "The name or identifier of a value must be specified before it's type is specified.";
 	private static final String TYPE_ALREADY_SPECIFIED_ERR_MSG = "The type has already been specified for this value.";
-	private static final String TYPE_UNSPECIFIED_ERR_MSG       = "The type must be specified before it's value.";
+	private static final String TYPE_UNSPECIFIED_ERR_MSG       = "A type must be specified for each value.";
+
+	private static final String TYPE_INCORRECTLY_SPECIFIED_ERR_MSG = "The type must be specified before it's value.";
 
 	public ValueInterpreter(){
 	}
 
-	public static Value parseNextValue( Reader reader ) throws ParseException, IOException {
+	static Value parseNextValue( Reader reader ) throws ParseException, IOException {
 		ValueInterpreterState interpreterState = new ValueInterpreterState( reader );
 
 		try{
@@ -39,9 +41,8 @@ class ValueInterpreter {
 		//working on the assumption that the first '<' is there. otherwise an exception would have been thrown at this point.
 		interpreterState.increaseEnclosureDepth();
 
-		do{
+		while( interpreterState.isEnclosureDepthNonZero() ){
 			interpreterState.readNextCharacterFromReader();
-
 			//the reason I have each case adding the current character to the extracted value rather than having that code after the switch statement is to simplify
 			//the control flow. No need to make assumptions about what should occur outside of the code within that case statement. Each is responsible to wrap things up.
 			switch( interpreterState.getCurrentCharacter() ){
@@ -49,36 +50,30 @@ class ValueInterpreter {
 				case '#':
 					handleNamedValueIndicator( interpreterState );
 				break;
-
 				//we only need to worry about matching pairs of '<' and '>' in lists, sets and scripts.
 				case '<':
 					handleOpenEnclosure( interpreterState );
 				break;
-
 				case '>':
 					handleCloseEnclosure( interpreterState );
 				break;
-
 				case ':':
 					handleValueTypeIndicator( interpreterState);
 				break;
-
 				case '\\':
 					handleEscapeSequence( interpreterState );
 				break;
-
 				default:
 					interpreterState.addCurrentCharacterToExtractedValue();
 			}
-		} while( interpreterState.isEnclosureDepthNonZero() );
+		}
 
 		if( interpreterState.getTypeOfValue() == null ){
-			throw new ParseException( "A type must be specified for each value.", interpreterState.getStartOfValue() );
+			throw new ParseException( ValueInterpreter.TYPE_UNSPECIFIED_ERR_MSG, interpreterState.getStartOfValue() );
 		}
 
 		//Attempt to parse the value having parsed the type and extracted the name and the string value.
-		Value d = interpreterState.toValue();
-		return d;
+		return interpreterState.toValue();
 	}
 
 	private static void handleNamedValueIndicator( ValueInterpreterState state ) throws ParseException {
@@ -98,7 +93,7 @@ class ValueInterpreter {
 	private static void handleOpenEnclosure( ValueInterpreterState state ) throws ParseException {
 		Type type = state.getTypeOfValue();
 		if( type == null ){
-			throw new ParseException( ValueInterpreter.TYPE_UNSPECIFIED_ERR_MSG, state.getStartOfValue() );
+			throw new ParseException( ValueInterpreter.TYPE_INCORRECTLY_SPECIFIED_ERR_MSG, state.getStartOfValue() );
 		}
 
 		if( type.isContainer ){
@@ -143,7 +138,7 @@ class ValueInterpreter {
 		state.addCurrentCharacterToExtractedValue();
 	}
 
-	protected static Object interpretValue( Type valueType, CharSequence value ) throws ParseException {
+	static Object interpretValue( Type valueType, CharSequence value ) throws ParseException {
 
 		switch( valueType ){
 			case TEXT:
@@ -163,14 +158,14 @@ class ValueInterpreter {
 		throw new ParseException( ValueInterpreter.UNKNOWN_TYPE_ERR_MSG, 0);
 	}
 
-	protected static String interpretString( CharSequence value ){
+	private static String interpretString( CharSequence value ){
 		return StringUtils.remove(value.toString(), '\\');
 	}
 
 	/**
 	 * Interprets the string value as a number. It first tries to interpret as a long and then as a double.
 	 **/
-	protected static Number interpretNumber( CharSequence value ) throws ValueInitException {
+	private static Number interpretNumber( CharSequence value ) throws ValueInitException {
 		try{
 			return Long.parseLong( value.toString() );
 		} catch( NumberFormatException nfe ){
@@ -189,7 +184,7 @@ class ValueInterpreter {
 	 * @return If the value is either 'true' or 'false' it returns that value else,
 	 *		an exception is thrown.
 	 **/
-	protected static Boolean interpretBool( CharSequence value ) throws ValueInitException {
+	private static Boolean interpretBool( CharSequence value ) throws ValueInitException {
 		value = StringUtils.trimToEmpty( value.toString() ).toLowerCase();
 
 		if( !boolStringValues.contains( value ) ) {
@@ -199,7 +194,7 @@ class ValueInterpreter {
 		return Boolean.parseBoolean( value.toString() );
 	}
 
-	protected static String interpretModule( CharSequence value ){
+	static String interpretModule( CharSequence value ){
 		return value.toString();
 	}
 
@@ -207,7 +202,7 @@ class ValueInterpreter {
 	 * Interprets the char sequence value as a list of Duct Values. Values are accessed from a list by calling it as a function with the index passed as a parameter.
 	 * @return A list a Duct values if one exists
 	 */
-	protected static List<Value> interpretList( CharSequence value ) throws ParseException {
+	private static List<Value> interpretList( CharSequence value ) throws ParseException {
 		List<Value> listValue = new ArrayList<>();
 		try {
 			StringReader reader = new StringReader( value.toString() );
@@ -230,16 +225,17 @@ class ValueInterpreter {
 	 * Interprets the char sequence value as a set of named duct values. Accessing values from a set is similar to accessing values from a list, only rather than an index, a name is given.
 	 * @return A set of named duct values if one exists
 	 */
-	protected static Map<String, Value> interpretSet(CharSequence value) throws ParseException {
+	private static Map<String, Value> interpretSet( CharSequence value ) throws ParseException {
 		Map<String,Value> set = new HashMap<>();
 
 		//the result of 'interpretList' will always be a super set of the result of 'interpretSet'
-		List<Value> valueList = interpretList(value);
+		List<Value> valueList = interpretList( value );
 
 		//if the value has no name then the value can't be accessed so there is no point in adding it to the set.
-		for( Value d:valueList ) {
-			if (!StringUtils.isEmpty(d.name))
-				set.put(d.name, d);
+		for( Value d:valueList ){
+			if( !StringUtils.isEmpty(d.name) ){
+				set.put( d.name, d );
+			}
 		}
 
 		return set;
