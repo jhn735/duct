@@ -12,28 +12,28 @@ import duct.lang.value.type.Type;
 public class Value extends Element implements Evaluable {
 
 	public final Type type;
-	protected Object value;
+	protected Object baseValue;
 
-	public Object getValue(){
-		return this.value;
+	public Object getBaseValue(){
+		return this.baseValue;
 	}
 
 	protected Value(){
 		super( "" );
 		this.type  = Type.TEXT;
-		this.value = null;
+		this.baseValue = null;
 	}
 
 	public Value( Type valueType, CharSequence name, CharSequence value ) throws ParseException {
 		super( constructName( valueType, name, value ) );
 		this.type = valueType;
-		this.value = ValueInterpreter.interpretValue( valueType, value );
+		this.baseValue = ValueInterpreter.interpretValue( valueType, value );
 	}
 
 	public Value( Value d ){
 		super( d.name );
 		this.type  = d.type;
-		this.value = d.getValue();
+		this.baseValue = d.getBaseValue();
 	}
 
 	public Value evaluate(){
@@ -51,11 +51,11 @@ public class Value extends Element implements Evaluable {
 	}
 
 	public String toString(){
-		return value.toString();
+		return baseValue.toString();
 	}
 
 	public boolean equals( Value obj ) {
-		return obj.type == this.type && this.value.equals(obj.getValue());
+		return obj.type == this.type && this.baseValue.equals(obj.getBaseValue());
 	}
 
 	public static Value defaultValue( Type valueType ){
