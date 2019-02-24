@@ -63,7 +63,7 @@ public class GroupValue extends Value {
 		for( int index = 0; index < valueList.size(); index++ ){
 			Value currentValue = valueList.get( index );
 			if( currentValue.hasName() ){
-				nameToIndexMap.put( currentValue.name, index );
+				nameToIndexMap.put( currentValue.getName(), index );
 			}
 		}
 

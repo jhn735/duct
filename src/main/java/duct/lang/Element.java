@@ -15,4 +15,16 @@ public abstract class Element{
 	public Element(){
 		this.name = "";
 	}
+
+	public final boolean hasName(){
+		return this.name != null && !this.name.isEmpty();
+	}
+
+	public final boolean hasSameName( Element e ){
+		return this.name.equalsIgnoreCase( e.name );
+	}
+
+	public final String getName(){
+		return this.name;
+	}
 }

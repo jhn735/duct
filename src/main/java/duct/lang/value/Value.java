@@ -37,14 +37,6 @@ public abstract class Value extends Element implements Evaluable {
 		return strValue.toString();
 	}
 
-	public boolean hasName(){
-		return this.name != null && !this.name.isEmpty();
-	}
-
-	public boolean isNameSame( CharSequence name ){
-		return this.name.equalsIgnoreCase( name.toString() );
-	}
-
 	public static Value defaultValue( Type valueType, CharSequence name  ){
 		try {
 			return Value.createValue( valueType, name, "" );
