@@ -5,7 +5,7 @@ import java.text.ParseException;
 
 public enum Type {
 
-	TEXT(false), NUMBER(false), BOOL(false), MODULE(false), LIST(true), SET(true);
+	TEXT(false), NUMBER(false), BOOL(false), GROUP(true), MODULE(false);
 
 	public final boolean isContainer;
 

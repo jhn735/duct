@@ -10,57 +10,39 @@ import duct.lang.Evaluable;
 import duct.lang.value.impl.*;
 
 public abstract class Value extends Element implements Evaluable {
-
 	public final Type type;
-	protected Object baseValue;
-
-	public Object getBaseValue(){
-		return this.baseValue;
-	}
-
-	public Value( Type valueType, CharSequence name, CharSequence baseValue ) throws ParseException {
-		super( name );
-		this.type      = valueType;
-
-		if( baseValue == null || baseValue.toString().isEmpty() ){
-			this.baseValue = this.defaultBaseValue();
-		} else {
-			this.baseValue = this.convertToBaseValue(baseValue);
-		}
-	}
-
-	public Value( Type valueType, CharSequence name, Object baseValue ){
-		super( name );
-		this.type      = valueType;
-		this.baseValue = baseValue;
-	}
 
 	public Value( Type valueType, CharSequence name ){
 		super( name );
 		this.type      = valueType;
-		this.baseValue = this.defaultBaseValue();
-	}
-
-	public Value( Value d ){
-		super( d.name );
-		this.type  = d.type;
-		this.baseValue = d.getBaseValue();
 	}
 
 	public Value evaluate(){
 		return this;
 	}
 
+	public abstract String getBaseValueAsString();
+
+	@Override
 	public String toString(){
-		return baseValue.toString();
+		StringBuilder strValue = new StringBuilder();
+		strValue.append('<');
+		if( this.hasName() ) {
+			strValue.append(this.name).append('#');
+		}
+		strValue.append( this.type.name().toUpperCase()).append(':');
+		strValue.append( this.getBaseValueAsString() );
+		strValue.append('>');
+
+		return strValue.toString();
 	}
 
-	protected abstract Object defaultBaseValue();
+	public boolean hasName(){
+		return this.name != null && !this.name.isEmpty();
+	}
 
-	protected abstract Object convertToBaseValue( CharSequence baseValue ) throws ParseException;
-
-	public boolean equals( Value obj ){
-		return obj.type == this.type && this.baseValue.equals( obj.getBaseValue() );
+	public boolean isNameSame( CharSequence name ){
+		return this.name.equalsIgnoreCase( name.toString() );
 	}
 
 	public static Value defaultValue( Type valueType, CharSequence name  ){
@@ -83,10 +65,8 @@ public abstract class Value extends Element implements Evaluable {
 					return new NumberValue( name, value );
 				case BOOL:
 					return new BoolValue( name, value );
-				case LIST:
-					return new ListValue( name, value );
-				case SET:
-					return new SetValue( name, value );
+				case GROUP:
+					return new GroupValue( name, value );
 			}
 
 		throw new ParseException( ValueInterpreter.UNKNOWN_TYPE_ERR_MSG, 0);
