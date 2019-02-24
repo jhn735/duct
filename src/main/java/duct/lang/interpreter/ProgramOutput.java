@@ -1,6 +1,6 @@
 package duct.lang.interpreter;
 
-import duct.lang.value.type.Type;
+import duct.lang.value.Type;
 import duct.lang.value.Value;
 import java.lang.Appendable;
 import java.util.Set;

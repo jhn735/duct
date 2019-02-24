@@ -10,6 +10,8 @@ import java.lang.CharSequence;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.opentest4j.AssertionFailedError;
+
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ValueTest {
 
-	@DisplayName("Should calculate the correct sum")
+	@DisplayName("Should parse the given value declaration statements correctly.")
 	@ParameterizedTest(name = "{index} => parseText={0}, expectedType={1}, expectedValue={2}, negativeTest={3}")
 	@CsvSource({
 		"'<Text:hello world!!>', 'TEXT', 'hello world!!', false",
@@ -36,7 +38,7 @@ class ValueTest {
 	void testValueParse( String parseText, String expectedType, String expectedValue, boolean negativeTest ) {
 		// do a positive test.
 		Value val;
-		try {	
+		try {
 			val = retrieveValue(parseText);
 			String type = val.type.name();
 			if(!expectedType.equalsIgnoreCase(type))
@@ -46,7 +48,7 @@ class ValueTest {
 				fail("Value '" + val.toString() + "' does not match the expected value '" + expectedValue + "'");
 			else if ( negativeTest )
 				fail("Value '" + val.toString() + "' matches the expected value but the test is supposed to be a negative test");
-		} catch(Exception e ) {
+		} catch( ParseException | IOException e ){
 			if(!negativeTest)
 				fail(e.getMessage());
 		}

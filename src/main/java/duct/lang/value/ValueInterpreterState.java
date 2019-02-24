@@ -1,8 +1,6 @@
 package duct.lang.value;
 
 import duct.lang.ParseUtils;
-import duct.lang.value.type.Type;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.text.ParseException;
@@ -19,16 +17,9 @@ class ValueInterpreterState {
 	private Type      typeOfValue;
 	private String    nameOfValue;
 
-	ValueInterpreterState( Reader r ){
+	public ValueInterpreterState( Reader r ){
 		this.reader = r;
-
-		this.extractedValue   = new StringBuilder();
-		this.characterCount   = 0;
-		this.currentCharacter = null;
-		this.startOfValue     = -1;
-		this.enclosureDepth   =  0L;
-		this.typeOfValue      = null;
-		this.nameOfValue      = null;
+		this.resetValues();
 	}
 
 	private void resetValues(){
@@ -38,7 +29,7 @@ class ValueInterpreterState {
 		this.startOfValue     = -1;
 		this.enclosureDepth   = 0L;
 		this.typeOfValue      = null;
-		this.nameOfValue      = null;
+		this.nameOfValue      = "";
 	}
 
 	long getEnclosureDepth(){
@@ -63,7 +54,7 @@ class ValueInterpreterState {
 		return this.characterCount;
 	}
 
-	int getStartOfValue(){
+	public int getStartOfValue(){
 		return this.startOfValue;
 	}
 
@@ -109,13 +100,13 @@ class ValueInterpreterState {
 		return this.typeOfValue;
 	}
 
-	String extractNameFromExtractedValue(){
+	public String extractNameFromExtractedValue(){
 		this.nameOfValue = this.extractedValue.toString();
 		this.resetExtractedValue();
 		return this.nameOfValue;
 	}
 
-	Value toValue() throws ParseException {
-		return new Value( this.typeOfValue, this.nameOfValue, this.extractedValue );
+	public Value toValue() throws ParseException {
+		return Value.createValue( this.typeOfValue, this.nameOfValue, this.extractedValue );
 	}
 }

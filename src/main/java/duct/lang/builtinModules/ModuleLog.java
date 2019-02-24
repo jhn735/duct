@@ -2,7 +2,7 @@ package duct.lang.builtinModules;
 import duct.lang.Executor;
 import duct.lang.Operation;
 import duct.lang.module.Module;
-import duct.lang.value.type.Type;
+import duct.lang.value.Type;
 import duct.lang.value.Value;
 
 import java.io.BufferedWriter;

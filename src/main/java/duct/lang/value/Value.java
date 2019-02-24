@@ -3,13 +3,13 @@ package duct.lang.value;
 import java.io.Reader;
 import java.io.IOException;
 import java.lang.CharSequence;
-import java.lang.Exception;
 import java.text.ParseException;
+
 import duct.lang.Element;
 import duct.lang.Evaluable;
-import duct.lang.value.type.Type;
+import duct.lang.value.impl.*;
 
-public class Value extends Element implements Evaluable {
+public abstract class Value extends Element implements Evaluable {
 
 	public final Type type;
 	protected Object baseValue;
@@ -18,16 +18,27 @@ public class Value extends Element implements Evaluable {
 		return this.baseValue;
 	}
 
-	protected Value(){
-		super( "" );
-		this.type  = Type.TEXT;
-		this.baseValue = null;
+	public Value( Type valueType, CharSequence name, CharSequence baseValue ) throws ParseException {
+		super( name );
+		this.type      = valueType;
+
+		if( baseValue == null || baseValue.toString().isEmpty() ){
+			this.baseValue = this.defaultBaseValue();
+		} else {
+			this.baseValue = this.convertToBaseValue(baseValue);
+		}
 	}
 
-	public Value( Type valueType, CharSequence name, CharSequence value ) throws ParseException {
-		super( constructName( valueType, name, value ) );
-		this.type = valueType;
-		this.baseValue = ValueInterpreter.interpretValue( valueType, value );
+	public Value( Type valueType, CharSequence name, Object baseValue ){
+		super( name );
+		this.type      = valueType;
+		this.baseValue = baseValue;
+	}
+
+	public Value( Type valueType, CharSequence name ){
+		super( name );
+		this.type      = valueType;
+		this.baseValue = this.defaultBaseValue();
 	}
 
 	public Value( Value d ){
@@ -40,34 +51,45 @@ public class Value extends Element implements Evaluable {
 		return this;
 	}
 
-	private static String constructName( Type t, CharSequence name, CharSequence value ){
-		String properName = (name == null) ? "" : name.toString();
-
-		if( t == Type.MODULE && properName.isEmpty() ){
-			properName = ValueInterpreter.interpretModule( value );
-		}
-
-	return properName;
-	}
-
 	public String toString(){
 		return baseValue.toString();
 	}
 
-	public boolean equals( Value obj ) {
-		return obj.type == this.type && this.baseValue.equals(obj.getBaseValue());
+	protected abstract Object defaultBaseValue();
+
+	protected abstract Object convertToBaseValue( CharSequence baseValue ) throws ParseException;
+
+	public boolean equals( Value obj ){
+		return obj.type == this.type && this.baseValue.equals( obj.getBaseValue() );
+	}
+
+	public static Value defaultValue( Type valueType, CharSequence name  ){
+		try {
+			return Value.createValue( valueType, name, "" );
+		} catch (ParseException e) {
+			return null;
+		}
 	}
 
 	public static Value defaultValue( Type valueType ){
-		try {
+		return defaultValue( valueType, "" );
+	}
+
+	public static Value createValue( Type valueType, CharSequence name, CharSequence value ) throws ParseException {
 			switch( valueType ){
-				case NUMBER: return new Value( valueType, "", "0" );
-				case BOOL:   return new Value( valueType, "", "false" );
-				default:     return new Value( valueType, "", "" );
+				case TEXT:
+					return new TextValue( name, value );
+				case NUMBER:
+					return new NumberValue( name, value );
+				case BOOL:
+					return new BoolValue( name, value );
+				case LIST:
+					return new ListValue( name, value );
+				case SET:
+					return new SetValue( name, value );
 			}
-		} catch( Exception e ){
-			return null;
-		}
+
+		throw new ParseException( ValueInterpreter.UNKNOWN_TYPE_ERR_MSG, 0);
 	}
 
 	public static Value nextValue( Reader reader ) throws ParseException, IOException {

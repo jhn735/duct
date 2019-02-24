@@ -1,4 +1,4 @@
-package duct.lang.value.type;
+package duct.lang.value;
 
 import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;

@@ -1,18 +1,13 @@
 package duct.lang.value;
 
 import duct.lang.ParseUtils;
-import duct.lang.value.type.Type;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.text.ParseException;
-import java.util.*;
 
-class ValueInterpreter {
-	private static final String UNKNOWN_TYPE_ERR_MSG           = "Cannot interpret value with type given.";
-	private static final String SRC_READ_ERROR_MSG             = "Unable to read source";
+public class ValueInterpreter {
+	public static final String UNKNOWN_TYPE_ERR_MSG           = "Cannot interpret value with type given.";
 	private static final String VALUE_NOT_ENCLOSED_MSG         = "A value must open with '<' and close with '>'";
 	private static final String IDENTIFIER_ORDER_ERR_MSG       = "The name or identifier of a value must be specified before it's type is specified.";
 	private static final String TYPE_ALREADY_SPECIFIED_ERR_MSG = "The type has already been specified for this value.";
@@ -23,7 +18,7 @@ class ValueInterpreter {
 	public ValueInterpreter(){
 	}
 
-	static Value parseNextValue( Reader reader ) throws ParseException, IOException {
+	public static Value parseNextValue( Reader reader ) throws ParseException, IOException {
 		ValueInterpreterState interpreterState = new ValueInterpreterState( reader );
 
 		try{
@@ -137,108 +132,5 @@ class ValueInterpreter {
 		state.addCurrentCharacterToExtractedValue();
 		state.readNextCharacterFromReader();
 		state.addCurrentCharacterToExtractedValue();
-	}
-
-	static Object interpretValue( Type valueType, CharSequence value ) throws ParseException {
-
-		switch( valueType ){
-			case TEXT:
-				return ValueInterpreter.interpretString( value );
-			case NUMBER:
-				return ValueInterpreter.interpretNumber( value );
-			case BOOL:
-				return ValueInterpreter.interpretBool(   value );
-			case MODULE:
-				return ValueInterpreter.interpretModule( value );
-			case LIST:
-				return ValueInterpreter.interpretList(   value );
-			case SET:
-				return ValueInterpreter.interpretSet(    value );
-		}
-
-		throw new ParseException( ValueInterpreter.UNKNOWN_TYPE_ERR_MSG, 0);
-	}
-
-	private static String interpretString( CharSequence value ){
-		return StringUtils.remove(value.toString(), '\\');
-	}
-
-	/**
-	 * Interprets the string value as a number. It first tries to interpret as a long and then as a double.
-	 **/
-	private static Number interpretNumber( CharSequence value ) throws ValueInitException {
-		try{
-			return Long.parseLong( value.toString() );
-		} catch( NumberFormatException nfe ){
-			try{
-				return Double.parseDouble( value.toString() );
-			} catch( NumberFormatException nfe2 ){
-				throw new ValueInitException( "Unable to interpret number from given text '" + value + "'.", 0 );
-			}
-		}
-	}
-
-	private static List<CharSequence> boolStringValues = Arrays.asList( "true", "false" );
-
-	/**
-	 * Interprets the string value as a boolean.
-	 * @return If the value is either 'true' or 'false' it returns that value else,
-	 *		an exception is thrown.
-	 **/
-	private static Boolean interpretBool( CharSequence value ) throws ValueInitException {
-		value = StringUtils.trimToEmpty( value.toString() ).toLowerCase();
-
-		if( !boolStringValues.contains( value ) ) {
-			throw new ValueInitException( "Value given '" + value + "' is not a boolean value.", 0 );
-		}
-
-		return Boolean.parseBoolean( value.toString() );
-	}
-
-	static String interpretModule( CharSequence value ){
-		return value.toString();
-	}
-
-	/*
-	 * Interprets the char sequence value as a list of Duct Values. Values are accessed from a list by calling it as a function with the index passed as a parameter.
-	 * @return A list a Duct values if one exists
-	 */
-	private static List<Value> interpretList( CharSequence value ) throws ParseException {
-		List<Value> listValue = new ArrayList<>();
-		try {
-			StringReader reader = new StringReader( value.toString() );
-
-			Value nextValue;
-			do{
-				nextValue = ValueInterpreter.parseNextValue( reader );
-				if( nextValue != null ){
-					listValue.add( nextValue );
-				}
-			} while( nextValue != null );
-		} catch( IOException i ){
-			throw new ParseException( SRC_READ_ERROR_MSG, 0 );
-		}
-
-		return listValue;
-	}
-
-	/*
-	 * Interprets the char sequence value as a set of named duct values. Accessing values from a set is similar to accessing values from a list, only rather than an index, a name is given.
-	 * @return A set of named duct values if one exists
-	 */
-	private static Map<String, Value> interpretSet( CharSequence value ) throws ParseException {
-		Map<String,Value> set = new HashMap<>();
-
-		//the result of 'interpretList' will always be a super set of the result of 'interpretSet'
-		List<Value> valueList = interpretList( value );
-
-		//if the value has no name then the value can't be accessed so there is no point in adding it to the set.
-		for( Value d:valueList ){
-			if( !StringUtils.isEmpty(d.name) ){
-				set.put( d.name, d );
-			}
-		}
-
-		return set;
 	}
 }
