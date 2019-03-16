@@ -9,37 +9,52 @@ import java.io.StringReader;
 import java.text.ParseException;
 import java.util.*;
 
-public class GroupValue extends Value {
+public class GroupValue extends Value implements Collection<Value>{
 	private static final String SRC_READ_ERROR_MSG = "Unable to read source";
 
 	private List<Value> valueList;
 	private Map<String, Integer> nameToIndexMap;
 
-	public GroupValue( CharSequence name, CharSequence value ) throws ParseException {
-		super( Type.GROUP, name);
-		this.valueList = parseValueList( value );
-		this.nameToIndexMap = createNameToIndexMap( this.valueList );
+	protected  GroupValue( CharSequence name ){
+		super( Type.GROUP, name );
+		this.valueList      = new ArrayList<>();
+		this.nameToIndexMap = new HashMap<>();
 	}
 
-	public Value getContainedValue( Number valueIndex ){
+	public GroupValue( CharSequence name, CharSequence value ) throws ParseException {
+		this( name );
+
+		this.parseValuesFromBaseValue( value );
+	}
+
+	public GroupValue( CharSequence name, Value value ){
+		this( name );
+		this.addNewValue( value );
+	}
+
+	public Value get( Number valueIndex ){
 		return this.valueList.get( valueIndex.intValue() );
 	}
 
-	public Value getContainedValue( CharSequence valueName ){
+	public Value get( CharSequence valueName ){
 		int index = this.getIndexOfNamedValue( valueName );
-		return this.getContainedValue( index );
+		return this.get( index );
 	}
 
 	private Integer getIndexOfNamedValue( CharSequence valueName ){
 		return nameToIndexMap.get( valueName.toString() );
 	}
 
-	/*
-	 * Interprets the char sequence value as a list of Duct Values. Values are accessed from a list by calling it as a function with the index passed as a parameter.
-	 * @return A list a Duct values if one exists
-	 */
-	private static List<Value> parseValueList( CharSequence baseValue ) throws ParseException {
-		List<Value> listValue = new ArrayList<>();
+	private void addNewValue( Value newValue ){
+		Integer nextIndex = this.valueList.size();
+		this.valueList.add( newValue );
+
+		if( !newValue.getName().isEmpty() ){
+			this.nameToIndexMap.put( newValue.getName(), nextIndex );
+		}
+	}
+
+	private void parseValuesFromBaseValue( CharSequence baseValue ) throws ParseException {
 		try {
 			StringReader reader = new StringReader( baseValue.toString() );
 
@@ -47,27 +62,12 @@ public class GroupValue extends Value {
 			do{
 				nextValue = ValueInterpreter.parseNextValue( reader );
 				if( nextValue != null ){
-					listValue.add( nextValue );
+					this.addNewValue( nextValue );
 				}
 			} while( nextValue != null );
 		} catch( IOException i ){
 			throw new ParseException( GroupValue.SRC_READ_ERROR_MSG, 0 );
 		}
-
-		return listValue;
-	}
-
-	private static Map<String, Integer> createNameToIndexMap( List<Value> valueList ){
-		Map<String, Integer> nameToIndexMap = new HashMap<>();
-
-		for( int index = 0; index < valueList.size(); index++ ){
-			Value currentValue = valueList.get( index );
-			if( currentValue.hasName() ){
-				nameToIndexMap.put( currentValue.getName(), index );
-			}
-		}
-
-		return nameToIndexMap;
 	}
 
 	@Override
@@ -77,5 +77,85 @@ public class GroupValue extends Value {
 			strValue.append( containedValue.toString() );
 		}
 		return strValue.toString();
+	}
+
+	@Override
+	public GroupValue toGroup(){
+		return this;
+	}
+
+	@Override
+	public int size() {
+		return this.valueList.size();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return this.valueList.isEmpty();
+	}
+
+	@Override
+	public boolean contains(Object o) {
+		return this.valueList.contains(o);
+	}
+
+	@Override
+	public Iterator<Value> iterator() {
+		return this.valueList.iterator();
+	}
+
+	@Override
+	public Object[] toArray() {
+		return this.valueList.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return this.valueList.toArray(a);
+	}
+
+	@Override
+	public boolean add(Value value) {
+		Integer indexOfExistingValue = this.nameToIndexMap.get( value.getName() );
+		if( indexOfExistingValue != null ){
+			this.valueList.set( indexOfExistingValue, value );
+		} else {
+			this.addNewValue( value );
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		throw new UnsupportedOperationException( "Group Value does not support removing values." );
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return this.valueList.containsAll(c);
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends Value> c) {
+		for( Value value: c ){
+			this.add( value );
+		}
+		return true;
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		throw new UnsupportedOperationException( "Group Value does not support removing values." );
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		throw new UnsupportedOperationException( "Group Value does not support removing values" );
+	}
+
+	@Override
+	public void clear() {
+		throw new UnsupportedOperationException( "Group Value does not support removing values" );
 	}
 }

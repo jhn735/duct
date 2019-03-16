@@ -7,7 +7,7 @@ import java.io.Reader;
 import java.text.ParseException;
 
 public class ValueInterpreter {
-	public static final String UNKNOWN_TYPE_ERR_MSG           = "Cannot interpret value with type given.";
+	        static final String UNKNOWN_TYPE_ERR_MSG           = "Cannot interpret value with type given.";
 	private static final String VALUE_NOT_ENCLOSED_MSG         = "A value must open with '<' and close with '>'";
 	private static final String IDENTIFIER_ORDER_ERR_MSG       = "The name or identifier of a value must be specified before it's type is specified.";
 	private static final String TYPE_ALREADY_SPECIFIED_ERR_MSG = "The type has already been specified for this value.";
@@ -15,8 +15,7 @@ public class ValueInterpreter {
 
 	private static final String TYPE_INCORRECTLY_SPECIFIED_ERR_MSG = "The type must be specified before it's value.";
 
-	public ValueInterpreter(){
-	}
+	public ValueInterpreter(){}
 
 	public static Value parseNextValue( Reader reader ) throws ParseException, IOException {
 		ValueInterpreterState interpreterState = new ValueInterpreterState( reader );
@@ -79,7 +78,7 @@ public class ValueInterpreter {
 			state.extractNameFromExtractedValue();
 		//if the the type is text then we can assume that the '#' is a part of the text value. Otherwise an error has occurred.
 		//also if the type is a container and are currently reading a contained value, it will be parsed later on it's own merit anyway.
-		} else if( type != Type.TEXT && !(enclosureDepth > 1 && type.isContainer) ){
+		} else if( type != Type.TEXT && !(enclosureDepth > 1 && type.isContainer()) ){
 			throw new ParseException( IDENTIFIER_ORDER_ERR_MSG, state.getStartOfValue() );
 		} else {
 			state.addCurrentCharacterToExtractedValue();
@@ -92,7 +91,7 @@ public class ValueInterpreter {
 			throw new ParseException( ValueInterpreter.TYPE_INCORRECTLY_SPECIFIED_ERR_MSG, state.getStartOfValue() );
 		}
 
-		if( type.isContainer ){
+		if( type.isContainer() ){
 			state.increaseEnclosureDepth();
 		}
 
@@ -119,8 +118,8 @@ public class ValueInterpreter {
 
 			state.setStartOfValue( state.getCharacterCount() + 1 );
 		//otherwise throw an error if the type has already been specified.
-		} else if(type != Type.TEXT && !(enclosureDepth > 1 && type.isContainer)){
-			throw new ParseException(TYPE_ALREADY_SPECIFIED_ERR_MSG, state.getStartOfValue() );
+		} else if( type != Type.TEXT && !(enclosureDepth > 1 && type.isContainer()) ){
+			throw new ParseException( ValueInterpreter.TYPE_ALREADY_SPECIFIED_ERR_MSG, state.getStartOfValue() );
 			//finally if nothing else is going on, add the current character to the extracted value.
 		} else {
 			state.addCurrentCharacterToExtractedValue();

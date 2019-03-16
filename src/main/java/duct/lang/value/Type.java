@@ -4,18 +4,16 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.ParseException;
 
 public enum Type {
+	TEXT, NUMBER, BOOL,
+	GROUP, MODULE, REFERENCE;
 
-	TEXT(false), NUMBER(false), BOOL(false), GROUP(true), MODULE(false);
-
-	public final boolean isContainer;
-
-	Type( boolean isCont ){
-		this.isContainer = isCont;
+	public boolean isContainer(){
+		return this == Type.GROUP;
 	}
 
 	public static Type parseType( CharSequence extractedTypeName ) throws ParseException {
 		for(Type t:Type.values()){
-			if( matchesType( t, extractedTypeName ) ) {
+			if( matchesType( t, extractedTypeName ) ){
 				return t;
 			}
 		}

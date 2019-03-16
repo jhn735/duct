@@ -28,12 +28,12 @@ public abstract class Module extends OperationSet {
 	private final Map<String, byte[]> settings;
 
 	public Module(CharSequence name, Collection<Operation> operations, Executor exe, Map<String, byte[]> settings ){
-		super( name, new HashSet<Operation>( operations ) );
+		super( name, new HashSet<>(operations) );
 		//it's okay to not have initial settings. A module should be able to generate it's own defaults.
 		if( settings != null )
-			this.settings = new HashMap<String, byte[]>( settings );
+			this.settings = new HashMap<>(settings);
 		else
-			this.settings = new HashMap<String, byte[]>();
+			this.settings = new HashMap<>();
 
 		this.executor = exe;
 	}

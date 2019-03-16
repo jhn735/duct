@@ -2,7 +2,7 @@ package duct.lang;
 import duct.lang.value.Value;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
+
 /**
   * Don't care much about implementation, only that when you give it a list of 
   * Values and tell it to execute, it does something and returns a value.

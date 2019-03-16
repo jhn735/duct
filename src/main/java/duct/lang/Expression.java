@@ -17,6 +17,8 @@ import duct.lang.value.Value;
 **/
 //expressions must have one operation and a set of zero or more values on which the operation works on. 
 public class Expression extends Element implements Evaluable {
+	private static final String EXPRESSION_NOT_ENCLOSED_MSG="An expression must be enclosed between '(' and ')'.";
+
 	public final Operation operation;
 	private List<Evaluable> evaluables;
 
@@ -42,20 +44,18 @@ public class Expression extends Element implements Evaluable {
 		return operation.execute( this.values() );
 	}
 
-	private static final String EXPRESSION_NOT_ENCLOSED_MSG="An expression must be enclosed between '(' and ')'.";
-
-	public static Expression nextExpression( Reader reader, Executor exe )
-		throws ParseException, IOException {
+	public static Expression nextExpression( Reader reader, Executor exe ) throws ParseException, IOException {
 		int charCount = 0;
 		char curChar = ParseUtils.readNextChar( reader );
 		PushbackReader pReader = new PushbackReader( reader );
 
-		Operation op = null;
-		List<Evaluable> evaluables = new ArrayList<Evaluable>();
+		Operation op;
+		List<Evaluable> evaluables = new ArrayList<>();
 
 		//throw a fit of the expression is not started properly
-		if( curChar != '(' )
-			throw new ParseException( EXPRESSION_NOT_ENCLOSED_MSG, charCount );
+		if( curChar != '(' ){
+			throw new ParseException( Expression.EXPRESSION_NOT_ENCLOSED_MSG, charCount );
+		}
 
 		//assuming the basic stuff is out the way, get the name of the operation and then
 		//get the operation.
@@ -80,13 +80,13 @@ public class Expression extends Element implements Evaluable {
 
 				//if the character is a '<' get the value it's suppose to represent
 				case '<':
-					pReader.unread(curChar);
-					evaluables.add(Value.nextValue(pReader));
+					pReader.unread( curChar );
+					evaluables.add( Value.nextValue( pReader ) );
 				break;
 
 				case '$':
 					name.setLength(0);
-					while( curChar != ' ' ){
+					while( !Character.isWhitespace( curChar ) ){
 						curChar = ParseUtils.readNextChar( pReader );
 						charCount++;
 						name.append( curChar );
@@ -96,11 +96,12 @@ public class Expression extends Element implements Evaluable {
 				break;
 				//Anything else should cause an error to be thrown.
 				default:
-					if( !Character.isWhitespace( curChar ) )
-						throw new ParseException( "Character '" + curChar + "' is not a valid start for either a variable, an expression or a value declaration.", charCount );
+					if( !Character.isWhitespace( curChar ) ) {
+						throw new ParseException("Character '" + curChar + "' is not a valid start for either a variable, an expression or a value declaration.", charCount);
+					}
 			}
 		} while( curChar != ')' );
 
-	return new Expression(op, evaluables);
+	return new Expression( op, evaluables );
 	}
 }

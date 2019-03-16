@@ -37,6 +37,10 @@ public abstract class Value extends Element implements Evaluable {
 		return strValue.toString();
 	}
 
+	public GroupValue toGroup(){
+		return new GroupValue( this.getName(), this );
+	}
+
 	public static Value defaultValue( Type valueType, CharSequence name  ){
 		try {
 			return Value.createValue( valueType, name, "" );
@@ -52,13 +56,15 @@ public abstract class Value extends Element implements Evaluable {
 	public static Value createValue( Type valueType, CharSequence name, CharSequence value ) throws ParseException {
 			switch( valueType ){
 				case TEXT:
-					return new TextValue( name, value );
+					return new TextValue(      name, value );
 				case NUMBER:
-					return new NumberValue( name, value );
+					return new NumberValue(    name, value );
 				case BOOL:
-					return new BoolValue( name, value );
+					return new BoolValue(      name, value );
 				case GROUP:
-					return new GroupValue( name, value );
+					return new GroupValue(     name, value );
+				case REFERENCE:
+					return new ReferenceValue( name, value );
 			}
 
 		throw new ParseException( ValueInterpreter.UNKNOWN_TYPE_ERR_MSG, 0);
