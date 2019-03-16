@@ -70,7 +70,7 @@ class ValueTest {
 				fail( "Type of value '" + type + "' does not match expected type, '" + expectedType + "'" );
 			}
 
-			Integer valueSize = val.toGroup().size();
+			Integer valueSize = val.toGroupValue().size();
 			if( valueSize.intValue() != expectedSize.intValue() ){
 				fail(
 						"Value with size of '" + valueSize.toString()

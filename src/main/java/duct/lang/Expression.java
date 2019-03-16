@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.PushbackReader;
 import java.text.ParseException;
+
 import duct.lang.value.Value;
 
 /**
@@ -17,10 +18,31 @@ import duct.lang.value.Value;
 **/
 //expressions must have one operation and a set of zero or more values on which the operation works on. 
 public class Expression extends Element implements Evaluable {
-	private static final String EXPRESSION_NOT_ENCLOSED_MSG="An expression must be enclosed between '(' and ')'.";
+	private static final String EXPRESSION_NOT_ENCLOSED_MSG = "An expression must be enclosed between '(' and ')'.";
 
-	public final Operation operation;
+	private Operation operation;
+	private String operationReference;
+
 	private List<Evaluable> evaluables;
+
+	private Executor executor;
+
+	public Expression( Operation op, List<Evaluable> evaluables ) {
+		super();
+		this.operation = op;
+		this.evaluables = evaluables;
+	}
+
+	public Expression( String opReference, List<Evaluable> evaluables ){
+		this(opReference, evaluables, null);
+	}
+
+	public Expression( String opReference, List<Evaluable> evaluables, Executor exe ){
+		super();
+		this.operationReference = opReference;
+		this.evaluables = evaluables;
+		this.executor = exe;
+	}
 
 	public List<Evaluable> evaluables(){
 		return new ArrayList<Evaluable>( evaluables );
@@ -28,28 +50,32 @@ public class Expression extends Element implements Evaluable {
 
 	//create a list of values from the list of evaluables given in the constructor
 	public List<Value> values() {
-		List<Value> values = new ArrayList<Value>();
-		for(Evaluable e:evaluables)
+		List<Value> values = new ArrayList<>();
+		for( Evaluable e:evaluables ){
 			values.add(e.evaluate());
+		}
 	return values;
 	}
 
-	public Expression( Operation op, List<Evaluable> evaluables ) {
-		super();
-		this.operation = op;
-		this.evaluables = evaluables;
-	} 
-
 	public Value evaluate() {
-		return operation.execute( this.values() );
+		if( this.executor == null ){
+			throw new IllegalStateException( "Executor must be set in order to evaluate an expression." );
+		}
+
+		return this.evaluate( this.executor );
 	}
 
-	public static Expression nextExpression( Reader reader, Executor exe ) throws ParseException, IOException {
+	public Value evaluate( Executor exe ){
+		return operation.execute( exe, this.values() );
+	}
+
+	public static Expression nextExpression( Reader reader ) throws ParseException, IOException {
 		int charCount = 0;
 		char curChar = ParseUtils.readNextChar( reader );
 		PushbackReader pReader = new PushbackReader( reader );
 
-		Operation op;
+		String opReference;
+
 		List<Evaluable> evaluables = new ArrayList<>();
 
 		//throw a fit of the expression is not started properly
@@ -66,7 +92,7 @@ public class Expression extends Element implements Evaluable {
 			name.append( curChar );
 		}
 
-		op = exe.getOperation( name );
+		opReference = name.toString();
 
 		do{
 			curChar = ParseUtils.readNextChar( pReader );
@@ -75,24 +101,13 @@ public class Expression extends Element implements Evaluable {
 			switch( curChar ){
 				case '(':
 					pReader.unread( curChar );
-					evaluables.add( Expression.nextExpression( pReader, exe ) );
+					evaluables.add( Expression.nextExpression( pReader ) );
 				break;
 
 				//if the character is a '<' get the value it's suppose to represent
 				case '<':
 					pReader.unread( curChar );
 					evaluables.add( Value.nextValue( pReader ) );
-				break;
-
-				case '$':
-					name.setLength(0);
-					while( !Character.isWhitespace( curChar ) ){
-						curChar = ParseUtils.readNextChar( pReader );
-						charCount++;
-						name.append( curChar );
-					}
-					Evaluable valueToAdd = exe.getValue( name );
-					evaluables.add( valueToAdd );
 				break;
 				//Anything else should cause an error to be thrown.
 				default:
@@ -102,6 +117,6 @@ public class Expression extends Element implements Evaluable {
 			}
 		} while( curChar != ')' );
 
-	return new Expression( op, evaluables );
+	return new Expression( opReference, evaluables );
 	}
 }

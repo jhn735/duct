@@ -11,7 +11,8 @@ import duct.lang.value.Value;
  * * If the interface needs to be changed, it can be changed.  
  */
 public interface Evaluable extends Callable<Value>{
-  public Value evaluate();
+  Value evaluate();
+  Value evaluate( Executor exe );
   default Value call(){
     return evaluate();
   }

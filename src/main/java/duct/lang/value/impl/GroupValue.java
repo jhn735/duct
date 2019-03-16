@@ -15,7 +15,7 @@ public class GroupValue extends Value implements Collection<Value>{
 	private List<Value> valueList;
 	private Map<String, Integer> nameToIndexMap;
 
-	protected  GroupValue( CharSequence name ){
+	protected GroupValue( CharSequence name ){
 		super( Type.GROUP, name );
 		this.valueList      = new ArrayList<>();
 		this.nameToIndexMap = new HashMap<>();
@@ -80,7 +80,7 @@ public class GroupValue extends Value implements Collection<Value>{
 	}
 
 	@Override
-	public GroupValue toGroup(){
+	public GroupValue toGroupValue(){
 		return this;
 	}
 

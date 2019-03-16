@@ -7,6 +7,7 @@ import java.text.ParseException;
 
 import duct.lang.Element;
 import duct.lang.Evaluable;
+import duct.lang.Executor;
 import duct.lang.value.impl.*;
 
 public abstract class Value extends Element implements Evaluable {
@@ -21,6 +22,9 @@ public abstract class Value extends Element implements Evaluable {
 		return this;
 	}
 
+	public Value evaluate( Executor exe ){
+		return this;
+	}
 	public abstract String getBaseValueAsString();
 
 	@Override
@@ -37,8 +41,16 @@ public abstract class Value extends Element implements Evaluable {
 		return strValue.toString();
 	}
 
-	public GroupValue toGroup(){
+	public GroupValue toGroupValue(){
 		return new GroupValue( this.getName(), this );
+	}
+
+	public ReferenceValue toReferenceValue(){
+		return new ReferenceValue( "REF_" + this.getName(), this.getName() );
+	}
+
+	public boolean isReferenceValue(){
+		return this.type == Type.REFERENCE;
 	}
 
 	public static Value defaultValue( Type valueType, CharSequence name  ){

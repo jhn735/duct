@@ -19,4 +19,9 @@ public class ReferenceValue extends Value {
 	public String getBaseValueAsString() {
 		return null;
 	}
+
+	@Override
+	public ReferenceValue toReferenceValue(){
+		return this;
+	}
 }
