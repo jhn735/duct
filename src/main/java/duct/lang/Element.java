@@ -7,7 +7,7 @@ package duct.lang;
 public abstract class Element{
 	protected final String name;
 
-	public Element(CharSequence name){
+	public Element( CharSequence name ){
 		this.name = name.toString();
 	}
 
