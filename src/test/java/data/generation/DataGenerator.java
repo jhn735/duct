@@ -10,7 +10,7 @@ public interface DataGenerator<K> {
 		Collection<K> generatedValues = new ArrayList<>();
 
 		for(;collectionSize > 0; collectionSize-- ){
-			generatedValues.add( generateValue() );
+			generatedValues.add( this.generateValue() );
 		}
 
 		return generatedValues;
