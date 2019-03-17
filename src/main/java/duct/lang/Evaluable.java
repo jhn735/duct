@@ -10,10 +10,12 @@ import duct.lang.value.Value;
  * * It's easier and important to differentiate evaluables from simple callables.
  * * If the interface needs to be changed, it can be changed.  
  */
-public interface Evaluable extends Callable<Value>{
-  Value evaluate();
-  Value evaluate( Executor exe );
-  default Value call(){
-    return evaluate();
-  }
+public interface Evaluable extends Callable<Value> {
+	Value evaluate();
+
+	Value evaluate( Executor exe );
+
+	default Value call(){
+		return evaluate();
+	}
 }

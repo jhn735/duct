@@ -25,13 +25,17 @@ public class Expression extends Element implements Evaluable {
 	private static final String EXPRESSION_NOT_ENCLOSED_ERR_MSG =
 			"An expression must be enclosed between '(' and ')'.";
 
-	private String          _operationReference;
-	private List<Evaluable> _evaluables;
+	private final String          _operationReference;
+	private final List<Evaluable> _evaluables;
 
 	public Expression( String opReference, List<Evaluable> evaluables ){
 		super();
 		this._operationReference = opReference;
 		this._evaluables = Collections.unmodifiableList( evaluables );
+	}
+
+	public String getOperationReference(){
+		return this._operationReference;
 	}
 
 	public List<Evaluable> getEvaluables(){
@@ -71,27 +75,27 @@ public class Expression extends Element implements Evaluable {
 		//assuming the basic stuff is out the way, get the name of the operation and then
 		//get the operation.
 		StringBuilder name = new StringBuilder();
-		while( !Character.isWhitespace( curChar ) ){
+		while( !Character.isWhitespace( curChar ) && curChar != ')' ){
 			curChar = ParseUtils.readNextChar( pReader, charCount );
 			name.append( curChar );
 		}
 
 		opReference = name.toString();
 
-		do{
+	 while( curChar != ')' ){
 			curChar = ParseUtils.readNextChar( pReader, charCount );
 
 			switch( curChar ){
 				case '(':
 					pReader.unread( curChar );
 					evaluables.add( Expression.nextExpression( pReader ) );
-				break;
+					break;
 
 				//if the character is a '<' get the value it's suppose to represent
 				case '<':
 					pReader.unread( curChar );
 					evaluables.add( Value.nextValue( pReader ) );
-				break;
+					break;
 
 				//Anything else should cause an error to be thrown.
 				default:
@@ -102,8 +106,7 @@ public class Expression extends Element implements Evaluable {
 						);
 					}
 			}
-		} while( curChar != ')' );
-
+		}
 		return new Expression( opReference, evaluables );
 	}
 }
