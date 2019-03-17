@@ -18,63 +18,24 @@ import duct.lang.value.Value;
  * class rather than a function responsible for parsing expressions allows one 
  * to run an expression without parsing the script again.
 **/
-//expressions must have one operation and a set of zero or more values on which the operation works on. 
 public class Expression extends Element implements Evaluable {
-	private static final String UNINITIALIZED_EXECUTOR_ERR_MSG =
-			"Executor for expression must be initializied before getting the operation.";
+	private static final String EXECUTOR_NEEDED_TO_EVALUATE_ERR_MSG =
+			"An executor must be provided in order to evaluate an expression";
 
 	private static final String EXPRESSION_NOT_ENCLOSED_ERR_MSG =
 			"An expression must be enclosed between '(' and ')'.";
 
-	private Operation       _operation;
 	private String          _operationReference;
 	private List<Evaluable> _evaluables;
-	private Executor        _executor;
-
-	public Expression( Operation op, List<Evaluable> evaluables ){
-		super();
-		this._operationReference = op.getName();
-		this._operation  = op;
-		this._evaluables = evaluables;
-	}
 
 	public Expression( String opReference, List<Evaluable> evaluables ){
-		this( opReference, evaluables, null );
-	}
-
-	public Expression( String opReference, List<Evaluable> evaluables, Executor exe ){
 		super();
 		this._operationReference = opReference;
 		this._evaluables = Collections.unmodifiableList( evaluables );
-		this._executor   = exe;
-
-		if( this._executor != null ){
-			this._operation = this._executor.getOperation( this._operationReference );
-		}
 	}
 
 	public List<Evaluable> getEvaluables(){
 		return this._evaluables;
-	}
-
-	public Executor getExecutor(){
-		return this._executor;
-	}
-
-	public boolean hasExecutor(){
-		return this._executor != null;
-	}
-
-	public Operation getOperation(){
-		if( !this.hasExecutor() ){
-			throw new IllegalStateException( Expression.UNINITIALIZED_EXECUTOR_ERR_MSG );
-		}
-
-		if( this._operation == null ){
-			this._operation = this.getExecutor().getOperation( this._operationReference );
-		}
-
-		return this._operation;
 	}
 
 	//create a list of values from the list of evaluables given in the constructor
@@ -85,19 +46,16 @@ public class Expression extends Element implements Evaluable {
 	}
 
 	public Value evaluate(){
-		if( this._executor == null ){
-			throw new IllegalStateException( "Executor must be set in order to evaluate an expression." );
-		}
-
-		return this.evaluate( this._executor );
+		throw new UnsupportedOperationException( Expression.EXECUTOR_NEEDED_TO_EVALUATE_ERR_MSG );
 	}
 
 	public Value evaluate( Executor exe ){
-		return _operation.execute( exe, this.getValues() );
+		Operation op = exe.getOperation( this._operationReference );
+		return op.execute( exe, this.getValues() );
 	}
 
 	public static Expression nextExpression( Reader reader ) throws ParseException, IOException {
-		int charCount = 0;
+		Integer charCount = 0;
 		char curChar = ParseUtils.readNextChar( reader );
 		PushbackReader pReader = new PushbackReader( reader );
 
@@ -114,16 +72,14 @@ public class Expression extends Element implements Evaluable {
 		//get the operation.
 		StringBuilder name = new StringBuilder();
 		while( !Character.isWhitespace( curChar ) ){
-			curChar = ParseUtils.readNextChar( pReader );
-			charCount++;
+			curChar = ParseUtils.readNextChar( pReader, charCount );
 			name.append( curChar );
 		}
 
 		opReference = name.toString();
 
 		do{
-			curChar = ParseUtils.readNextChar( pReader );
-			charCount++;
+			curChar = ParseUtils.readNextChar( pReader, charCount );
 
 			switch( curChar ){
 				case '(':
@@ -136,6 +92,7 @@ public class Expression extends Element implements Evaluable {
 					pReader.unread( curChar );
 					evaluables.add( Value.nextValue( pReader ) );
 				break;
+
 				//Anything else should cause an error to be thrown.
 				default:
 					if( !Character.isWhitespace( curChar ) ){
