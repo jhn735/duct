@@ -22,7 +22,7 @@ import java.text.ParseException;
 
 /**
   * Interpreter for the Duct language.
-  * Anything which goes wrong in the constructor, will cause a runtime exception to occur and likely kill the program. 
+  * Anything which goes wrong in the constructor, will cause a runtime exception to occur and likely kill the program.
   * I *want* this to happen. If something goes wrong here the rest of the program will not function properly and so needs to be fixed.
  **/
 public class DuctLangInterpreter implements Executor {
@@ -32,6 +32,7 @@ public class DuctLangInterpreter implements Executor {
 	private Map<String, Script> scripts;
 
 	private URLClassLoader moduleLoader;
+	private boolean _terminationStateReached = false;
 
 	private static final String HOME_PROPERTY = "user.home";
 
@@ -48,7 +49,7 @@ public class DuctLangInterpreter implements Executor {
 		this.outputAgent     = new ProgramOutput( programOutputURL );
 
 		//load the modules
-		this.modules = new HashMap<String, Module>();
+		this.modules = new HashMap<>();
 		loadBuiltInModules();
 	}
 
@@ -93,7 +94,7 @@ public class DuctLangInterpreter implements Executor {
 	public URL requestJurisdictionURL( String jurisdictionName ){
 		if( isValidJurisdictionName( jurisdictionName ) )
 			return null;
-		String expandedName = "moduleFiles/" + jurisdictionName.toString();
+		String expandedName = "moduleFiles/" + jurisdictionName;
 		return this.jurisLeasingAgent.lease( expandedName );
 	}
 
@@ -212,5 +213,14 @@ public class DuctLangInterpreter implements Executor {
 	 **/
 	public void displayValue( Value val, CharSequence label ) {
 		this.outputAgent.handle( val, label.toString() );
+	}
+
+	/**
+	 * Returns true if the executor has reached a terminal state. Either the builtin Quit function has been called or
+	 * an error has occurred.
+	 * @return true iff the executor is in a terminal state.
+	 **/
+	public boolean terminated(){
+		return this._terminationStateReached;
 	}
 }

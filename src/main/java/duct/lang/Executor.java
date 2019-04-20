@@ -110,4 +110,11 @@ public interface Executor {
 	  * @return The element which is the result of the execution.
 	 **/
 	Element execute( CharSequence identifier );
+
+	/**
+	  * Returns true if the executor has reached a terminal state. Either the builtin Quit function has been called or
+	  * an error has occurred.
+	  * @return true iff the executor is in a terminal state.
+	 **/
+	boolean terminated();
 }
