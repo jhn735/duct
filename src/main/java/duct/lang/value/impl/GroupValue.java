@@ -12,7 +12,7 @@ import java.util.*;
 public class GroupValue extends Value implements Collection<Value>{
 	private static final String SRC_READ_ERROR_MSG = "Unable to read source";
 
-	private List<Value> valueList;
+	private List<Value>          valueList;
 	private Map<String, Integer> nameToIndexMap;
 
 	protected GroupValue( CharSequence name ){
@@ -23,7 +23,6 @@ public class GroupValue extends Value implements Collection<Value>{
 
 	public GroupValue( CharSequence name, CharSequence value ) throws ParseException {
 		this( name );
-
 		this.parseValuesFromBaseValue( value );
 	}
 
