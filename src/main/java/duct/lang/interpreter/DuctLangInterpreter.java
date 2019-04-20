@@ -63,8 +63,9 @@ public class DuctLangInterpreter implements Executor {
 			Expression exp = Expression.nextExpression( new StringReader( statementText.toString() ) );
 			expressionResult = exp.evaluate( this );
 			this.outputAgent.handle(expressionResult);
-		} catch ( ParseException p ){
-		} catch ( IOException io ) {}
+		} catch ( ParseException | IOException e ){
+			this._terminationStateReached = true;
+		}
 
 		return expressionResult;
 	}
