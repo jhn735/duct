@@ -16,7 +16,7 @@ public class DuctCLIArgument {
   /**
    * Enumeration contain the definitions of the arguments to pull.
    **/
-  public static enum ArgDef{
+  public enum ArgDef{
     FILE("file", true, "Executes the given script file."), 
     HELP("help", false, "Displays a list of options and their descriptions."), 
     INTERACTIVE("interactive", false, "Starts the program in interactive mode. This is active by default.");
@@ -26,7 +26,7 @@ public class DuctCLIArgument {
     final public boolean argumentRequired;
     final public String description;
 
-    private ArgDef(String name, boolean argRequired, String description){
+    ArgDef(String name, boolean argRequired, String description){
       this.name = name;
       //for now the short name is simply the first letter of the name.
       this.shortName = Character.toString(this.name.charAt(0));
@@ -52,4 +52,4 @@ public class DuctCLIArgument {
   public int hashCode(){
     return definition.hashCode();
   }
-};
+}

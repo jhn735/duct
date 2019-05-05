@@ -15,17 +15,17 @@ import java.util.Scanner;
  * disabled by user arguments. 
 */
 public class Duct{
-	public static enum ConfigProperty {
+	public enum ConfigProperty {
 		SCRIPT_PATH, START_REPL, DISP_HELP
 	}
 
-	protected Map<String, Object> config;
+	private Map<String, Object> config;
 
 	public static void main(String[] args){
 	}
 
 	public Duct(List<String> args){
-		config = new HashMap<String, Object>();
+		config = new HashMap<>();
 		CLIProcessor proc = new CLIProcessor(args);
 		for(DuctCLIArgument arg:proc.arguments){
 			switch(arg.definition){
